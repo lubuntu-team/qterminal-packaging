@@ -1,0 +1,5 @@
+qterminal (0.6.0-1) unstable; urgency=medium
+
+  * Initial release (Closes: #741173)
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 25 Oct 2014 02:58:06 +0200
