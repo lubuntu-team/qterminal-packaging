@@ -28,10 +28,10 @@ Description: QT-based multitab terminal emulator
  lightweight, open-source, specially designed for LXQt desktop environment.
  .
  The features of qterminal include:
- * Split terminal horizontal and vertical.
- * Multiple tab.
- * Customized shortcut.
- * Change color scheme.
+  * Split terminal horizontal and vertical.
+  * Multiple tab.
+  * Customized shortcut.
+  * Change color scheme.
 
 Package: qterminal-dbg
 Architecture: any
@@ -45,9 +45,9 @@ Description: QT-based multitab terminal emulator (debug symbols)
  lightweight, open-source, specially designed for LXQt desktop environment.
  .
  The features of qterminal include:
- * Split terminal horizontal and vertical.
- * Multiple tab.
- * Customized shortcut.
- * Change color scheme.
+  * Split terminal horizontal and vertical.
+  * Multiple tab.
+  * Customized shortcut.
+  * Change color scheme.
  .
  This package contains debug symbols for qterminal.
