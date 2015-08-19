@@ -30,3 +30,15 @@ Depends:
 Replaces: qterminal-qt5
 Description: QT-based multitab terminal emulator 
  Based on QTermWidget by e_k@users.sourceforge.net
+
+Package: qterminal-dbg
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends}, 
+ libqtermwidget5-0,
+Replaces: qterminal-qt5
+Description: QT-based multitab terminal emulator (debug symbols)
+ Based on QTermWidget by e_k@users.sourceforge.net
+ .
+ This package contains debug symbols for qterminal.
