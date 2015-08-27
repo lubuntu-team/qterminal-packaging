@@ -8,10 +8,11 @@ Priority: optional
 Build-Depends: debhelper (>= 9),
                cmake (>= 3.0.2),
                libqtermwidget5-0-dev (>= 0.6.0),
+               libqt5x11extras5-dev (>= 5.3),
                libx11-dev,
-               qtbase5-private-dev,
-               qttools5-dev,
-               qttools5-dev-tools,
+               qtbase5-private-dev (>= 5.3),
+               qttools5-dev (>= 5.3),
+               qttools5-dev-tools (>= 5.3),
                quilt,
 Standards-Version: 3.9.6
 Vcs-Browser: http://anonscm.debian.org/cgit/pkg-lxqt/qterminal.git
@@ -22,7 +23,6 @@ Package: qterminal
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-Replaces: qterminal-qt5
 Description: QT-based multitab terminal emulator 
  Qterminal is a Qt-based multitab terminal forked from QTermWidget, it is
  lightweight, open-source, specially designed for LXQt desktop environment.

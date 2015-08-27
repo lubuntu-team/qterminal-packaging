@@ -1,4 +1,4 @@
-dFormat: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: qterminal
 Source: https://github.com/qterminal/qterminal.git
 
