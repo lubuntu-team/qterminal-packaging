@@ -4,7 +4,10 @@
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 %:
-	dh $@  --buildsystem cmake --parallel --with quilt
+	dh $@  --buildsystem cmake --parallel
+
+override_dh_auto_install:
+	dh_auto_install -- DESTDIR=$(CURDIR)/debian/qterminal
 
 override_dh_strip:
 	dh_strip --dbg-package=qterminal-dbg
