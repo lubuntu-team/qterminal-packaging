@@ -1,10 +1,23 @@
-#if QT_VERSION < 0x050000
-#include <QDesktopServices>
-#else
-#include <QStandardPaths>
-#endif
+/***************************************************************************
+ *   Copyright (C) 2014 by Petr Vanek                                      *
+ *   petr@scribus.info                                                     *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ***************************************************************************/
 
 #include <QDebug>
+#include <QStandardPaths>
 
 #include "bookmarkswidget.h"
 #include "properties.h"
@@ -96,39 +109,6 @@ public:
     BookmarkLocalGroupItem(AbstractBookmarkItem *parent)
         : BookmarkGroupItem(QObject::tr("Local Bookmarks"), parent)
     {
-#if QT_VERSION < 0x050000
-        QList<QDesktopServices::StandardLocation> locations;
-        locations << QDesktopServices::DesktopLocation
-                  << QDesktopServices::DocumentsLocation
-                  << QDesktopServices::TempLocation
-                  << QDesktopServices::HomeLocation
-                  << QDesktopServices::MusicLocation
-                  << QDesktopServices::PicturesLocation;
-
-        QString path;
-        QString name;
-        QString cmd;
-        QDir d;
-
-        // standard $HOME subdirs
-        foreach (QDesktopServices::StandardLocation i, locations)
-        {
-            path = QDesktopServices::storageLocation(i);
-            if (!d.exists(path))
-            {
-                //qDebug() << "Dir:" << path << "does not exist. Skipping.";
-                continue;
-            }
-            // it works in Qt5, not in Qt4
-            // name = QDesktopServices::displayName(i);
-            name = path;
-
-            path.replace(" ", "\\ ");
-            cmd = "cd " + path;
-
-            addChild(new BookmarkCommandItem(name, cmd, this));
-        }
-#else
         QList<QStandardPaths::StandardLocation> locations;
         locations << QStandardPaths::DesktopLocation
                   << QStandardPaths::DocumentsLocation
@@ -148,7 +128,6 @@ public:
             path = QStandardPaths::writableLocation(i);
             if (!d.exists(path))
             {
-                //qDebug() << "Dir:" << path << "does not exist. Skipping.";
                 continue;
             }
             name = QStandardPaths::displayName(i);
@@ -158,7 +137,6 @@ public:
 
             addChild(new BookmarkCommandItem(name, cmd, this));
         }
-#endif
 
         // system env - include dirs in the tree
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
@@ -167,7 +145,6 @@ public:
             path = env.value(i);
             if (!d.exists(path) || !QFileInfo(path).isDir())
             {
-                //qDebug() << "Env Dir:" << path << "does not exist. Skipping.";
                 continue;
             }
             path.replace(" ", "\\ ");

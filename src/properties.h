@@ -1,3 +1,21 @@
+/***************************************************************************
+ *   Copyright (C) 2010 by Petr Vanek                                      *
+ *   petr@scribus.info                                                     *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ***************************************************************************/
+
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
@@ -16,12 +34,15 @@ typedef QMap<QString,QString> ShortcutMap;
 class Properties
 {
     public:
-        static Properties *Instance(const QString& filename = QString(""));
+        static Properties *Instance(const QString& filename = QString());
 
         QFont defaultFont();
         void saveSettings();
+        void loadSettings();
+        void migrate_settings();
 
-        QByteArray mainWindowGeometry;
+        QSize mainWindowSize;
+        QPoint mainWindowPosition;
         QByteArray mainWindowState;
         //ShortcutMap shortcuts;
         QString shell;
@@ -37,12 +58,12 @@ class Properties
 
         Sessions sessions;
 
-        int appOpacity;
-        int termOpacity;
+        int appTransparency;
+        int termTransparency;
 
         int scrollBarPos;
         int tabsPos;
-        bool alwaysShowTabs;
+        bool hideTabBarWithOneTab;
         int m_motionAfterPaste;
 
         bool borderless;
@@ -51,11 +72,16 @@ class Properties
 
         bool askOnExit;
 
+        bool saveSizeOnExit;
+        bool savePosOnExit;
+
         bool useCWD;
 
         bool useBookmarks;
         bool bookmarksVisible;
         QString bookmarksFile;
+
+        int terminalsPreset;
 
         QKeySequence dropShortCut;
         bool dropKeepOpen;
@@ -65,7 +91,6 @@ class Properties
 
         QMap< QString, QAction * > actions;
 
-        void loadSettings();
 
 
     private:
@@ -77,6 +102,8 @@ class Properties
         explicit Properties(const QString& filename);
         Properties(const Properties &) {};
         ~Properties();
+
+        QSettings *m_settings;
 
 };
 

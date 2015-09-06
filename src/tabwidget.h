@@ -13,9 +13,7 @@
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
 #ifndef TAB_WIDGET
@@ -75,13 +73,16 @@ public slots:
     void saveSession();
     void loadSession();
 
+    void preset2Horizontal();
+    void preset2Vertical();
+    void preset4Terminals();
+
 signals:
     void closeTabNotification();
 
 protected:
     enum Direction{Left = 1, Right};
     void contextMenuEvent(QContextMenuEvent * event);
-    void recountIndexes();
     void move(Direction);
     /*! Event filter for TabWidget's QTabBar. It's installed on tabBar()
         in the constructor.
@@ -89,6 +90,8 @@ protected:
         renaming or new tab opening
      */
     bool eventFilter(QObject *obj, QEvent *event);
+protected slots:
+    void updateTabIndices();
 
 private:
     int tabNumerator;
