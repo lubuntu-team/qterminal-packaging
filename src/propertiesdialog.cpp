@@ -1,3 +1,21 @@
+/***************************************************************************
+ *   Copyright (C) 2010 by Petr Vanek                                      *
+ *   petr@scribus.info                                                     *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ***************************************************************************/
+
 #include <qtermwidget.h>
 
 #include <QDebug>
@@ -24,6 +42,7 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
     QStringList colorSchemes = QTermWidget::availableColorSchemes();
 
     listWidget->setCurrentRow(0);
+    listWidget->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContentsOnFirstShow);
 
     colorSchemaCombo->addItems(colorSchemes);
     int csix = colorSchemaCombo->findText(Properties::Instance()->colorScheme);
@@ -33,34 +52,34 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
     emulationComboBox->addItems(emulations);
     int eix = emulationComboBox->findText(Properties::Instance()->emulation);
     emulationComboBox->setCurrentIndex(eix != -1 ? eix : 0 );
-   
+
     /* shortcuts */
     setupShortcuts();
 
     /* scrollbar position */
     QStringList scrollBarPosList;
-    scrollBarPosList << "No scrollbar" << "Left" << "Right";
+    scrollBarPosList << tr("No scrollbar") << tr("Left") << tr("Right");
     scrollBarPos_comboBox->addItems(scrollBarPosList);
     scrollBarPos_comboBox->setCurrentIndex(Properties::Instance()->scrollBarPos);
 
     /* tabs position */
     QStringList tabsPosList;
-    tabsPosList << "Top" << "Bottom" << "Left" << "Right";
+    tabsPosList << tr("Top") << tr("Bottom") << tr("Left") << tr("Right");
     tabsPos_comboBox->addItems(tabsPosList);
     tabsPos_comboBox->setCurrentIndex(Properties::Instance()->tabsPos);
 
-    alwaysShowTabsCheckBox->setChecked(Properties::Instance()->alwaysShowTabs);
+    hideTabBarCheckBox->setChecked(Properties::Instance()->hideTabBarWithOneTab);
 
     // show main menu bar
     showMenuCheckBox->setChecked(Properties::Instance()->menuVisible);
 
     /* actions by motion after paste */
-    
+
     QStringList motionAfter;
-    motionAfter << "No move" << "Move start" << "Move end";
+    motionAfter << tr("No move") << tr("Move start") << tr("Move end");
     motionAfterPasting_comboBox->addItems(motionAfter);
     motionAfterPasting_comboBox->setCurrentIndex(Properties::Instance()->m_motionAfterPaste);
-    
+
     // Setting windows style actions
     styleComboBox->addItem(tr("System Default"));
     styleComboBox->addItems(QStyleFactory::keys());
@@ -68,18 +87,19 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
     int ix = styleComboBox->findText(Properties::Instance()->guiStyle);
     if (ix != -1)
         styleComboBox->setCurrentIndex(ix);
-    
+
     setFontSample(Properties::Instance()->font);
 
-    appOpacityBox->setValue(Properties::Instance()->appOpacity);
-    //connect(appOpacityBox, SIGNAL(valueChanged(int)), this, SLOT(apply()));
+    appTransparencyBox->setValue(Properties::Instance()->appTransparency);
 
-    termOpacityBox->setValue(Properties::Instance()->termOpacity);
-    //connect(termOpacityBox, SIGNAL(valueChanged(int)), this, SLOT(apply()));
+    termTransparencyBox->setValue(Properties::Instance()->termTransparency);
 
     highlightCurrentCheckBox->setChecked(Properties::Instance()->highlightCurrentTerminal);
 
     askOnExitCheckBox->setChecked(Properties::Instance()->askOnExit);
+
+    savePosOnExitCheckBox->setChecked(Properties::Instance()->savePosOnExit);
+    saveSizeOnExitCheckBox->setChecked(Properties::Instance()->saveSizeOnExit);
 
     useCwdCheckBox->setChecked(Properties::Instance()->useCWD);
 
@@ -97,6 +117,8 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
     openBookmarksFile(Properties::Instance()->bookmarksFile);
     connect(bookmarksButton, SIGNAL(clicked()),
             this, SLOT(bookmarksButton_clicked()));
+
+    terminalPresetComboBox->setCurrentIndex(Properties::Instance()->terminalsPreset);
 }
 
 
@@ -120,21 +142,24 @@ void PropertiesDialog::apply()
     Properties::Instance()->emulation = emulationComboBox->currentText();
 
     /* do not allow to go above 99 or we lose transparency option */
-    (appOpacityBox->value() >= 100) ?
-            Properties::Instance()->appOpacity = 99
+    (appTransparencyBox->value() >= 100) ?
+            Properties::Instance()->appTransparency = 99
                 :
-            Properties::Instance()->appOpacity = appOpacityBox->value();
+            Properties::Instance()->appTransparency = appTransparencyBox->value();
 
-    Properties::Instance()->termOpacity = termOpacityBox->value();
+    Properties::Instance()->termTransparency = termTransparencyBox->value();
     Properties::Instance()->highlightCurrentTerminal = highlightCurrentCheckBox->isChecked();
 
     Properties::Instance()->askOnExit = askOnExitCheckBox->isChecked();
+
+    Properties::Instance()->savePosOnExit = savePosOnExitCheckBox->isChecked();
+    Properties::Instance()->saveSizeOnExit = saveSizeOnExitCheckBox->isChecked();
 
     Properties::Instance()->useCWD = useCwdCheckBox->isChecked();
 
     Properties::Instance()->scrollBarPos = scrollBarPos_comboBox->currentIndex();
     Properties::Instance()->tabsPos = tabsPos_comboBox->currentIndex();
-    Properties::Instance()->alwaysShowTabs = alwaysShowTabsCheckBox->isChecked();
+    Properties::Instance()->hideTabBarWithOneTab = hideTabBarCheckBox->isChecked();
     Properties::Instance()->menuVisible = showMenuCheckBox->isChecked();
     Properties::Instance()->m_motionAfterPaste = motionAfterPasting_comboBox->currentIndex();
 
@@ -153,6 +178,8 @@ void PropertiesDialog::apply()
     Properties::Instance()->useBookmarks = useBookmarksCheckBox->isChecked();
     Properties::Instance()->bookmarksFile = bookmarksLineEdit->text();
     saveBookmarksFile(Properties::Instance()->bookmarksFile);
+
+    Properties::Instance()->terminalsPreset = terminalPresetComboBox->currentIndex();
 
     emit propertiesChanged();
 }

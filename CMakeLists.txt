@@ -2,41 +2,29 @@ cmake_minimum_required(VERSION 2.8)
 
 project(qterminal)
 
-option(USE_SYSTEM_QXT "Use system Qxt Library for global shortcuts" ON)
-option(USE_QT5 "Build using Qt5. Default OFF." OFF)
+include(GNUInstallDirs)
 
 set(STR_VERSION "0.6.0")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-if(USE_QT5 AND USE_SYSTEM_QXT)
-    message(FATAL_ERROR "Unable to use system qxt with qt5 now")
+# we need qpa/qplatformnativeinterface.h for global shortcut
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5LinguistTools REQUIRED)
+if(APPLE)
+elseif(UNIX)
+    find_package(Qt5X11Extras REQUIRED)
 endif()
-
-if(USE_QT5)
-    find_package(Qt5Widgets REQUIRED)
-    find_package(Qt5LinguistTools REQUIRED)
-    find_package(QTermWidget5 REQUIRED)
-    message(STATUS "Qt5 version: ${Qt5Core_VERSION_STRING}")
-else()
-    find_package(QTermWidget4 REQUIRED)
-endif()
+find_package(QTermWidget5 REQUIRED)
+message(STATUS "Qt version: ${Qt5Core_VERSION_STRING}")
 
 include(${QTERMWIDGET_USE_FILE})
 
-if(USE_SYSTEM_QXT)
-    message(STATUS "Using system Qxt...")
-    find_package(Qxt REQUIRED COMPONENTS QxtCore QxtGui)
-    if(NOT QXT_FOUND)
-        message(FATAL_ERROR "System Qxt not found. Install Qxt devel package or use -DUSE_SYSTEM_QXT=0 to build with internal copy of this library")
-    endif()
-
-    set(QXT_INCLUDE_DIRS "${QXT_INCLUDE_PATH}/QxtCore" "${QXT_INCLUDE_PATH}/QxtGui")
-else()
-    message(STATUS "Using bundled Qxt...")
-    set(QXT_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src/third-party")
-endif()
+# TODO remove Qxt
+message(STATUS "Using bundled Qxt...")
+set(QXT_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src/third-party")
 
 
 if(APPLE)
@@ -45,9 +33,10 @@ if(APPLE)
 elseif(UNIX)
    find_package(X11 REQUIRED)
    message(STATUS "X11_X11_LIB: ${X11_X11_LIB}")
-endif ()
+endif()
 
 add_definitions(-DSTR_VERSION=\"${STR_VERSION}\")
+add_definitions(${Qt5X11Extras_DEFINITIONS})
 
 
 set(EXE_NAME qterminal)
@@ -104,24 +93,19 @@ set(QTERM_TS
     src/translations/qterminal_es.ts
     src/translations/qterminal_et.ts
     src/translations/qterminal_it.ts
+    src/translations/qterminal_pt.ts
+    src/translations/qterminal_hu.ts
     src/translations/qterminal_ru.ts
+    src/translations/qterminal_ja.ts
+    src/translations/qterminal_zh_CN.ts
 )
 
-if(USE_QT5)
-    qt5_wrap_ui( QTERM_UI ${QTERM_UI_SRC} )
-    qt5_wrap_cpp( QTERM_MOC ${QTERM_MOC_SRC} )
-    qt5_add_resources( QTERM_RCC ${QTERM_RCC_SRC} )
-    qt5_add_translation( QTERM_QM ${QTERM_TS} )
-    # bundled qt5 version of libqxt requires private headers (as for 2014-05-27)
-    include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-else()
-    qt4_wrap_ui(QTERM_UI ${QTERM_UI_SRC})
-    qt4_wrap_cpp(QTERM_MOC ${QTERM_MOC_SRC})
-    qt4_add_resources(QTERM_RCC ${QTERM_RCC_SRC})
-    qt4_add_translation(QTERM_QM ${QTERM_TS})
-endif()
+qt5_wrap_ui( QTERM_UI ${QTERM_UI_SRC} )
+qt5_wrap_cpp( QTERM_MOC ${QTERM_MOC_SRC} )
+qt5_add_resources( QTERM_RCC ${QTERM_RCC_SRC} )
+qt5_add_translation( QTERM_QM ${QTERM_TS} )
 
-include_directories (
+include_directories(
     "${CMAKE_SOURCE_DIR}"
     "${CMAKE_SOURCE_DIR}/src"
     "${CMAKE_BINARY_DIR}"
@@ -156,7 +140,7 @@ if(APPLEBUNDLE)
     # use icon for app bundle to be visible in finder
     set(APPLE_BUNDLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/macosx/qterminal.icns")
 else()
-    set(TRANSLATIONS_DIR "${CMAKE_INSTALL_PREFIX}/share/qterminal/translations")
+    set(TRANSLATIONS_DIR "${CMAKE_INSTALL_FULL_DATADIR}/qterminal/translations")
     add_definitions(-DTRANSLATIONS_DIR=\"${TRANSLATIONS_DIR}\")
 endif()
 
@@ -179,6 +163,8 @@ endif()
 
 if(APPLE)
     target_link_libraries(${EXE_NAME} ${CARBON_LIBRARY})
+elseif(UNIX)
+    target_link_libraries(${EXE_NAME} Qt5::X11Extras)
 endif()
 
 if(X11_FOUND)
@@ -186,14 +172,21 @@ if(X11_FOUND)
 endif()
 
 
-install(FILES qterminal.desktop DESTINATION share/applications)
-install(FILES qterminal_drop.desktop DESTINATION share/applications)
+install(FILES
+    qterminal.desktop
+    qterminal_drop.desktop
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
+)
 
+install(FILES
+    qterminal.appdata.xml
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/appdata"
+)
 
 if(NOT APPLEBUNDLE)
-    install(TARGETS ${EXE_NAME} RUNTIME DESTINATION bin)
+    install(TARGETS ${EXE_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
     install(FILES ${QTERM_QM} DESTINATION ${TRANSLATIONS_DIR})
-    install(FILES src/icons/qterminal.png DESTINATION share/pixmaps)
+    install(FILES src/icons/qterminal.png DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/64x64/apps")
 else()
     message(STATUS "APPLEBUNDLE")
 

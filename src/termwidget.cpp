@@ -1,3 +1,21 @@
+/***************************************************************************
+ *   Copyright (C) 2010 by Petr Vanek                                      *
+ *   petr@scribus.info                                                     *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ***************************************************************************/
+
 #include <QMenu>
 #include <QVBoxLayout>
 #include <QPainter>
@@ -72,7 +90,7 @@ void TermWidgetImpl::propertiesChanged()
 
     qDebug() << "TermWidgetImpl::propertiesChanged" << this << "emulation:" << Properties::Instance()->emulation;
     setKeyBindings(Properties::Instance()->emulation);
-    setTerminalOpacity(Properties::Instance()->termOpacity/100.0);
+    setTerminalOpacity(1.0 - Properties::Instance()->termTransparency/100.0);
 
     /* be consequent with qtermwidget.h here */
     switch(Properties::Instance()->scrollBarPos) {
@@ -106,6 +124,9 @@ void TermWidgetImpl::customContextMenuCall(const QPoint & pos)
     menu.addAction(Properties::Instance()->actions[SPLIT_VERTICAL]);
 #warning TODO/FIXME: disable the action when there is only one terminal
     menu.addAction(Properties::Instance()->actions[SUB_COLLAPSE]);
+    menu.addSeparator();
+    menu.addAction(Properties::Instance()->actions[TOGGLE_MENU]);
+    menu.addAction(Properties::Instance()->actions[PREFERENCES]);
     menu.exec(mapToGlobal(pos));
 }
 

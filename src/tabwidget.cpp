@@ -13,9 +13,7 @@
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
 #include <QTabBar>
@@ -51,6 +49,7 @@ TabWidget::TabWidget(QWidget* parent) : QTabWidget(parent), tabNumerator(0)
     tabBar()->installEventFilter(this);
 
     connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(removeTab(int)));
+    connect(tabBar(), SIGNAL(tabMoved(int,int)), this, SLOT(updateTabIndices()));
 }
 
 TermWidgetHolder * TabWidget::terminalHolder()
@@ -84,7 +83,7 @@ int TabWidget::addNewTab(const QString & shell_program)
     connect(console, SIGNAL(renameSession()), this, SLOT(renameSession()));
 
     int index = addTab(console, label);
-    recountIndexes();
+    updateTabIndices();
     setCurrentIndex(index);
     console->setInitialFocus();
 
@@ -148,7 +147,7 @@ void TabWidget::zoomReset()
     terminalHolder()->currentTerminal()->impl()->zoomReset();
 }
 
-void TabWidget::recountIndexes()
+void TabWidget::updateTabIndices()
 {
     for(int i = 0; i < count(); i++)
         widget(i)->setProperty(TAB_INDEX_PROPERTY, i);
@@ -210,7 +209,7 @@ void TabWidget::removeFinished()
     if(prop.isValid() && prop.canConvert(QVariant::Int))
     {
         int index = prop.toInt();
-	    removeTab(index);
+        removeTab(index);
 //        if (count() == 0)
 //            emit closeTabNotification();
     }
@@ -224,7 +223,7 @@ void TabWidget::removeTab(int index)
     QTabWidget::removeTab(index);
     w->deleteLater();
 
-    recountIndexes();
+    updateTabIndices();
     int current = currentIndex();
     if (current >= 0 )
     {
@@ -307,7 +306,7 @@ void TabWidget::move(Direction dir)
         setUpdatesEnabled(true);
         setCurrentIndex(newIndex);
         child->setFocus();
-        recountIndexes();
+        updateTabIndices();
     }
 }
 
@@ -377,10 +376,41 @@ void TabWidget::loadSession()
     reinterpret_cast<TermWidgetHolder*>(widget(currentIndex()))->loadSession();
 }
 
+void TabWidget::preset2Horizontal()
+{
+    int ix = TabWidget::addNewTab();
+    TermWidgetHolder* term = reinterpret_cast<TermWidgetHolder*>(widget(ix));
+    term->splitHorizontal(term->currentTerminal());
+    // switch to the 1st terminal
+    term->switchNextSubterminal();
+}
+
+void TabWidget::preset2Vertical()
+{
+    int ix = TabWidget::addNewTab();
+    TermWidgetHolder* term = reinterpret_cast<TermWidgetHolder*>(widget(ix));
+    term->splitVertical(term->currentTerminal());
+    // switch to the 1st terminal
+    term->switchNextSubterminal();
+}
+
+void TabWidget::preset4Terminals()
+{
+    int ix = TabWidget::addNewTab();
+    TermWidgetHolder* term = reinterpret_cast<TermWidgetHolder*>(widget(ix));
+    term->splitVertical(term->currentTerminal());
+    term->splitHorizontal(term->currentTerminal());
+    term->switchNextSubterminal();
+    term->switchNextSubterminal();
+    term->splitHorizontal(term->currentTerminal());
+    // switch to the 1st terminal
+    term->switchNextSubterminal();
+}
+
 void TabWidget::showHideTabBar()
 {
     if (Properties::Instance()->tabBarless)
         tabBar()->setVisible(false);
     else
-        tabBar()->setVisible(Properties::Instance()->alwaysShowTabs || count() > 1);
+        tabBar()->setVisible(!Properties::Instance()->hideTabBarWithOneTab || count() > 1);
 }

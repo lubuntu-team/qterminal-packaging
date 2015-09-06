@@ -13,9 +13,7 @@
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
 
@@ -57,6 +55,10 @@
 
 #define TOGGLE_MENU "Toggle Menu"
 #define TOGGLE_BOOKMARKS "Toggle Bookmarks"
+
+#define HIDE_WINDOW_BORDERS "Hide Window Borders"
+#define SHOW_TAB_BAR "Show Tab Bar"
+#define FULLSCREEN "Fullscreen"
 
 /* Some defaults for QTerminal application */
 
@@ -101,6 +103,8 @@
 #define MOVE_RIGHT_SHORTCUT            "Shift+Alt+Right"
 
 #define RENAME_SESSION_SHORTCUT        "Shift+Alt+S"
+
+#define FULLSCREEN_SHORTCUT           "F11"
 
 // XON/XOFF features:
 

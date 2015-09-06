@@ -1,4 +1,4 @@
-qterminal (0.6.0-1) unstable; urgency=medium
+qterminal (0.6.0+20150802-1) unstable; urgency=medium
 
   * Initial release (Closes: #741173)
 
