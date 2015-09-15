@@ -1,5 +1,26 @@
 qterminal (0.6.0+20150802-1) unstable; urgency=medium
 
-  * Initial release (Closes: #741173)
+  [ Alf Gaida ]
+  * initial debian packaging
+  * improvements in debian $foo
+  * Cherry-picking upstream version 0.6.0+20150802.
+  * Changed mail address czchen
 
- -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Wed, 19 Aug 2015 19:31:52 +0800
+  [ Andrew Lee (李健秋) ]
+  * Adding upstream version 0.6.0.
+
+  [ ChangZhuo Chen (陳昌倬) ]
+  * Initial release (Closes: #741173)
+  * Cleanup debian $foo:
+    - Add qterminal-dbg
+    - Add watch
+    - Add qterminal manpage
+    - Add local-options
+    - Update control
+    - Install manpage
+    - Remove lintian-overrides
+    - Update description
+    - Update copyright
+    - Update rules, add linker flags
+
+ -- Alf Gaida <agaida@siduction.org>  Tue, 15 Sep 2015 20:55:38 +0200
