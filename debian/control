@@ -19,6 +19,7 @@ Vcs-Git: git://anonscm.debian.org/pkg-lxqt/qterminal.git
 Homepage: https://github.com/qterminal/qterminal
 
 Package: qterminal
+Provides: x-terminal-emulator
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
