@@ -8,7 +8,6 @@ set -e
 case "$1" in
     configure)
     update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/qterminal 80
-    find /home/*/.config -type f -name qterminal\* -exec mv {} {}.dpkg-old \; || exit 0
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
