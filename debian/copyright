@@ -6,6 +6,13 @@ Files: *
 Copyright: 2010-2015 Petr Vanek <petr@scribus.info>
 License: GPL-2+
 
+Files: src/config.h
+       src/main.cpp
+       src/mainwindow.*
+       src/tabwidget.*
+Copyright: Copyright (C) 2006 by Vladimir Kuznetsov <vovanec@gmail.com>
+License: GPL-2+
+
 Files: src/third-party/*
 Copyright: Copyright (c) 2006 - 2011, the LibQxt project.
 License: BSD-3-clause
