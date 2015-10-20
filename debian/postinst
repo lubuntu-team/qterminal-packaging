@@ -7,7 +7,7 @@ set -e
 
 case "$1" in
     configure)
-    update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/qterminal 80
+    update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/qterminal 40
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
