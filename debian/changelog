@@ -1,3 +1,9 @@
+qterminal (0.6.0+20150802-2) unstable; urgency=medium
+
+  * Change x-terminal-emulator alternative priority to 40. (Closes: #802430)
+
+ -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Tue, 20 Oct 2015 20:41:43 +0800
+
 qterminal (0.6.0+20150802-1) unstable; urgency=medium
 
   [ Alf Gaida ]
