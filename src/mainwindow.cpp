@@ -52,7 +52,9 @@ MainWindow::MainWindow(const QString& work_dir,
 
     m_bookmarksDock = new QDockWidget(tr("Bookmarks"), this);
     m_bookmarksDock->setObjectName("BookmarksDockWidget");
+    m_bookmarksDock->setAutoFillBackground(true);
     BookmarksWidget *bookmarksWidget = new BookmarksWidget(m_bookmarksDock);
+    bookmarksWidget->setAutoFillBackground(true);
     m_bookmarksDock->setWidget(bookmarksWidget);
     addDockWidget(Qt::LeftDockWidgetArea, m_bookmarksDock);
     connect(bookmarksWidget, SIGNAL(callCommand(QString)),
@@ -511,15 +513,18 @@ void MainWindow::closeEvent(QCloseEvent *ev)
     {
         // #80 - do not save state and geometry in drop mode
         if (!m_dropMode) {
-	    if (Properties::Instance()->savePosOnExit) {
+            if (Properties::Instance()->savePosOnExit) {
             	Properties::Instance()->mainWindowPosition = pos();
-	    }
-	    if (Properties::Instance()->saveSizeOnExit) {
+            }
+            if (Properties::Instance()->saveSizeOnExit) {
             	Properties::Instance()->mainWindowSize = size();
-	    }
+            }
             Properties::Instance()->mainWindowState = saveState();
         }
         Properties::Instance()->saveSettings();
+        for (int i = consoleTabulator->count(); i > 0; --i) {
+            consoleTabulator->removeTab(i - 1);
+        }
         ev->accept();
         return;
     }
@@ -531,6 +536,7 @@ void MainWindow::closeEvent(QCloseEvent *ev)
 
     QCheckBox * dontAskCheck = new QCheckBox(tr("Do not ask again"), dia);
     QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Yes | QDialogButtonBox::No, Qt::Horizontal, dia);
+    buttonBox->button(QDialogButtonBox::Yes)->setDefault(true);
 
     connect(buttonBox, SIGNAL(accepted()), dia, SLOT(accept()));
     connect(buttonBox, SIGNAL(rejected()), dia, SLOT(reject()));
@@ -547,6 +553,9 @@ void MainWindow::closeEvent(QCloseEvent *ev)
         Properties::Instance()->mainWindowState = saveState();
         Properties::Instance()->askOnExit = !dontAskCheck->isChecked();
         Properties::Instance()->saveSettings();
+        for (int i = consoleTabulator->count(); i > 0; --i) {
+            consoleTabulator->removeTab(i - 1);
+        }
         ev->accept();
     } else {
         ev->ignore();
