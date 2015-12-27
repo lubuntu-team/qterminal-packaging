@@ -49,8 +49,8 @@ void print_usage_and_exit(int code)
     puts("  -p,  --profile            Load qterminal with specific options");
     puts("  -v,  --version            Prints application version and exits");
     puts("  -w,  --workdir <dir>      Start session with specified work directory");
-    puts("\nHomepage: <https://github.com/qterminal>");
-    puts("Report bugs to <https://github.com/qterminal/qterminal>");
+    puts("\nHomepage: <https://github.com/lxde/qterminal>");
+    puts("Report bugs to <https://github.com/lxde/qterminal/issues>");
     exit(code);
 }
 
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
         QIcon::setThemeName("QTerminal");
 
     // translations
-    QString fname = QString("qterminal_%1.qm").arg(QLocale::system().name().left(2));
+    QString fname = QString("qterminal_%1.qm").arg(QLocale::system().name().left(5));
     QTranslator translator;
 #ifdef TRANSLATIONS_DIR
     qDebug() << "TRANSLATIONS_DIR: Loading translation file" << fname << "from dir" << TRANSLATIONS_DIR;

@@ -1,3 +1,13 @@
+qterminal (0.6.0+20151227-1) unstable; urgency=medium
+
+  * Cherry-picking upstream version 0.6.0+20151227.
+  * Removed dbg package in favor of dbgsym.
+  * Fixied debian/docs
+  * Simplifed debian/rules
+  * Renamed debian/qterminal.manpages to debian/manpages
+
+ -- Alf Gaida <agaida@siduction.org>  Sun, 27 Dec 2015 17:57:04 +0100
+
 qterminal (0.6.0+20150802-2) unstable; urgency=medium
 
   * Change x-terminal-emulator alternative priority to 40. (Closes: #802430)

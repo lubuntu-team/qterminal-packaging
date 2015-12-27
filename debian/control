@@ -32,22 +32,3 @@ Description: QT-based multitab terminal emulator
   * Multiple tab.
   * Customized shortcut.
   * Change color scheme.
-
-Package: qterminal-dbg
-Architecture: any
-Section: debug
-Priority: extra
-Depends: ${shlibs:Depends},
-         ${misc:Depends},
-         qterminal (= ${binary:Version})
-Description: QT-based multitab terminal emulator (debug symbols)
- Qterminal is a Qt-based multitab terminal forked from QTermWidget, it is
- lightweight, open-source, specially designed for LXQt desktop environment.
- .
- The features of qterminal include:
-  * Split terminal horizontal and vertical.
-  * Multiple tab.
-  * Customized shortcut.
-  * Change color scheme.
- .
- This package contains debug symbols for qterminal.
