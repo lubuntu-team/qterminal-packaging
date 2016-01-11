@@ -1,3 +1,15 @@
+qterminal (0.6.0+20160104-1) unstable; urgency=medium
+
+  [ Alf Gaida ]
+  * Cherry-picking upstream version 0.6.0+20160104.
+  * Fixed copyright for 2016, added Peter Mattern 
+  * Fixed 'possible-unindented-list-in-extended-description'
+
+  [ Peter Mattern ]
+  * Adjust control file
+
+ -- Alf Gaida <agaida@siduction.org>  Mon, 11 Jan 2016 21:24:39 +0100
+
 qterminal (0.6.0+20151227-1) unstable; urgency=medium
 
   * Cherry-picking upstream version 0.6.0+20151227.

@@ -27,7 +27,7 @@ Description: Lightweight Qt terminal emulator
  QTerminal is a lightwight terminal emulator based on QTermWidget.
  .
  Among other it features
- * Split terminals (horizontally and vertically).
- * Multiple tabs.
- * Customizable shortcuts.
- * Various color schemes.
+   * Split terminals (horizontally and vertically).
+   * Multiple tabs.
+   * Customizable shortcuts.
+   * Various color schemes.
