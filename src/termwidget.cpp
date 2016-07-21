@@ -88,7 +88,6 @@ void TermWidgetImpl::propertiesChanged()
         setHistorySize(-1);
     }
 
-    qDebug() << "TermWidgetImpl::propertiesChanged" << this << "emulation:" << Properties::Instance()->emulation;
     setKeyBindings(Properties::Instance()->emulation);
     setTerminalOpacity(1.0 - Properties::Instance()->termTransparency/100.0);
 
@@ -103,6 +102,19 @@ void TermWidgetImpl::propertiesChanged()
     case 2:
     default:
         setScrollBarPosition(QTermWidget::ScrollBarRight);
+        break;
+    }
+
+    switch(Properties::Instance()->keyboardCursorShape) {
+    case 1:
+        setKeyboardCursorShape(QTermWidget::UnderlineCursor);
+        break;
+    case 2:
+        setKeyboardCursorShape(QTermWidget::IBeamCursor);
+        break;
+    default:
+    case 0:
+        setKeyboardCursorShape(QTermWidget::BlockCursor);
         break;
     }
 

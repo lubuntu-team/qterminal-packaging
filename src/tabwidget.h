@@ -49,6 +49,7 @@ public slots:
     void moveLeft();
     void moveRight();
     void renameSession(int);
+    void renameCurrentSession();
     void setWorkDirectory(const QString&);
 
     void switchNextSubterminal();
@@ -66,6 +67,7 @@ public slots:
 
     void changeTabPosition(QAction *);
     void changeScrollPosition(QAction *);
+    void changeKeyboardCursorShape(QAction *);
     void propertiesChanged();
 
     void clearActiveTerminal();

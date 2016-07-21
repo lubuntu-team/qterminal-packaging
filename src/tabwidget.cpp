@@ -164,6 +164,11 @@ void TabWidget::renameSession(int index)
     }
 }
 
+void TabWidget::renameCurrentSession()
+{
+    renameSession(currentIndex());
+}
+
 void TabWidget::renameTabsAfterRemove()
 {
 // it breaks custom names - it replaces original/custom title with shell no #
@@ -174,13 +179,14 @@ void TabWidget::renameTabsAfterRemove()
 #endif
 }
 
-void TabWidget::contextMenuEvent ( QContextMenuEvent * event )
+void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu(this);
 
     QAction *close = menu.addAction(QIcon::fromTheme("document-close"), tr("Close session"));
-    QAction *rename = menu.addAction(tr("Rename session"));
-    rename->setShortcut(tr(RENAME_SESSION_SHORTCUT));
+    QAction *rename = menu.addAction(Properties::Instance()->actions[RENAME_SESSION]->text());
+    rename->setShortcut(Properties::Instance()->actions[RENAME_SESSION]->shortcut());
+    rename->blockSignals(true);
 
     int tabIndex = tabBar()->tabAt(event->pos());
     QAction *action = menu.exec(event->globalPos());
@@ -332,7 +338,6 @@ void TabWidget::changeScrollPosition(QAction *triggered)
     if(!scrollPosition)
         qFatal("scrollPosition is NULL");
 
-
     Properties::Instance()->scrollBarPos =
             scrollPosition->actions().indexOf(triggered);
 
@@ -353,7 +358,19 @@ void TabWidget::changeTabPosition(QAction *triggered)
     setTabPosition(position);
     prop->tabsPos = position;
     prop->saveSettings();
-    return;
+}
+
+void TabWidget::changeKeyboardCursorShape(QAction *triggered)
+{
+    QActionGroup *keyboardCursorShape = static_cast<QActionGroup *>(sender());
+    if(!keyboardCursorShape)
+        qFatal("keyboardCursorShape is NULL");
+
+    Properties::Instance()->keyboardCursorShape =
+            keyboardCursorShape->actions().indexOf(triggered);
+
+    Properties::Instance()->saveSettings();
+    propertiesChanged();
 }
 
 void TabWidget::propertiesChanged()

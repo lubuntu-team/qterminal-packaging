@@ -1,3 +1,24 @@
+qterminal (0.6.1~114-ga50f87c-1) experimental; urgency=medium
+
+  * Cherry-picking upstream version 0.6.1~114-ga50f87c. 
+  * Preparing the upcoming release, switch to experimental
+  * Added build dependencies:
+    - gcc (>= 4:6)
+    - g++ (>= 4:6)
+    - libkf5windowsystem-dev,
+    - liblxqt0-dev (>= 0.10.96~),
+    - libqt5xdg-dev (>= 1.3.1~),
+  * Bumped Standards to 3.9.8, no changes needed
+  * Fixed VCS fields, using https, plain /git/ and pointing to the right branch
+  * Added Recommends qterminal-l10n
+  * Fixed copyright Format field, using https
+  * Exported LC_ALL=C.UTF-8, make builds reproducible 
+  * Added hardening options
+  * Added translation control to rules
+  * Set CMAKE_BUILD_TYPE=RelWithDebInfo
+
+ -- Alf Gaida <agaida@siduction.org>  Thu, 21 Jul 2016 16:51:41 +0200
+
 qterminal (0.6.0+20160104-1) unstable; urgency=medium
 
   [ Alf Gaida ]

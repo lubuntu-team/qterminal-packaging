@@ -2,20 +2,25 @@ Source: qterminal
 Maintainer: LXQt Packaging Team <pkg-lxqt-devel@lists.alioth.debian.org>
 Uploaders: Alf Gaida <agaida@siduction.org>,
            ChangZhuo Chen (陳昌倬) <czchen@debian.org>,
-           Andrew Lee (李健秋) <ajqlee@debian.org>,
+           Andrew Lee (李健秋) <ajqlee@debian.org>
 Section: x11
 Priority: optional
 Build-Depends: debhelper (>= 9),
                cmake (>= 3.0.2),
-               libqtermwidget5-0-dev,
+               gcc (>= 4:6),
+               g++ (>= 4:6),
+               libkf5windowsystem-dev,
+               liblxqt0-dev (>= 0.10.96~),
+               libqtermwidget5-0-dev (>= 0.6.1~),
                libqt5x11extras5-dev,
+               libqt5xdg-dev (>= 1.3.1~),
                libx11-dev,
                qtbase5-private-dev,
                qttools5-dev,
                qttools5-dev-tools
-Standards-Version: 3.9.6
-Vcs-Browser: http://anonscm.debian.org/cgit/pkg-lxqt/qterminal.git
-Vcs-Git: git://anonscm.debian.org/pkg-lxqt/qterminal.git
+Standards-Version: 3.9.8
+Vcs-Browser: https://anonscm.debian.org/git/pkg-lxqt/qterminal.git/?h=debian/experimental
+Vcs-Git: https://anonscm.debian.org/git/pkg-lxqt/qterminal.git -b debian/experimental
 Homepage: https://github.com/lxde/qterminal
 
 Package: qterminal
@@ -23,6 +28,7 @@ Provides: x-terminal-emulator
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
+Recommends: qterminal-l10n
 Description: Lightweight Qt terminal emulator
  QTerminal is a lightwight terminal emulator based on QTermWidget.
  .
