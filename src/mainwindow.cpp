@@ -94,16 +94,12 @@ MainWindow::MainWindow(const QString& work_dir,
     setup_FileMenu_Actions();
     setup_ActionsMenu_Actions();
     setup_ViewMenu_Actions();
+    setupCustomDirs();
 
     /* The tab should be added after all changes are made to
        the main window; otherwise, the initial prompt might
        get jumbled because of changes in internal geometry. */
     consoleTabulator->addNewTab(command);
-
-    // Add global rename Session shortcut
-    renameSession = new QAction(tr("Rename Session"), this);
-    renameSession->setShortcut(QKeySequence(tr(RENAME_SESSION_SHORTCUT)));
-    connect(renameSession, SIGNAL(triggered()), consoleTabulator, SLOT(renameSession()));
 }
 
 MainWindow::~MainWindow()
@@ -295,7 +291,15 @@ void MainWindow::setup_ActionsMenu_Actions()
     Properties::Instance()->actions[TOGGLE_MENU]->setShortcut(seq);
     connect(Properties::Instance()->actions[TOGGLE_MENU], SIGNAL(triggered()), this, SLOT(toggleMenu()));
     addAction(Properties::Instance()->actions[TOGGLE_MENU]);
-    // tis is correct - add action to main window - not to menu to keep toggle working
+    // this is correct - add action to main window - not to menu to keep toggle working
+
+    // Add global rename current session shortcut
+    Properties::Instance()->actions[RENAME_SESSION] = new QAction(tr("Rename session"), this);
+    seq = QKeySequence::fromString(settings.value(RENAME_SESSION, RENAME_SESSION_SHORTCUT).toString());
+    Properties::Instance()->actions[RENAME_SESSION]->setShortcut(seq);
+    connect(Properties::Instance()->actions[RENAME_SESSION], SIGNAL(triggered()), consoleTabulator, SLOT(renameCurrentSession()));
+    addAction(Properties::Instance()->actions[RENAME_SESSION]);
+    // this is correct - add action to main window - not to menu
 
     settings.endGroup();
 
@@ -473,6 +477,42 @@ void MainWindow::setup_ViewMenu_Actions()
     }
 
     menu_Window->addMenu(scrollPosMenu);
+
+    /* Keyboard cursor shape */
+    keyboardCursorShape = new QActionGroup(this);
+    QAction *block = new QAction(tr("&BlockCursor"), this);
+    QAction *underline = new QAction(tr("&UnderlineCursor"), this);
+    QAction *ibeam = new QAction(tr("&IBeamCursor"), this);
+
+    /* order of insertion is dep. on QTermWidget::KeyboardCursorShape enum */
+    keyboardCursorShape->addAction(block);
+    keyboardCursorShape->addAction(underline);
+    keyboardCursorShape->addAction(ibeam);
+
+    for(int i = 0; i < keyboardCursorShape->actions().size(); ++i)
+        keyboardCursorShape->actions().at(i)->setCheckable(true);
+
+    if( Properties::Instance()->keyboardCursorShape < keyboardCursorShape->actions().size() )
+        keyboardCursorShape->actions().at(Properties::Instance()->keyboardCursorShape)->setChecked(true);
+
+    connect(keyboardCursorShape, SIGNAL(triggered(QAction *)),
+             consoleTabulator, SLOT(changeKeyboardCursorShape(QAction *)) );
+
+    keyboardCursorShapeMenu = new QMenu(tr("&Keyboard Cursor Shape"), menu_Window);
+    keyboardCursorShapeMenu->setObjectName("keyboardCursorShapeMenu");
+
+    for(int i=0; i < keyboardCursorShape->actions().size(); ++i) {
+        keyboardCursorShapeMenu->addAction(keyboardCursorShape->actions().at(i));
+    }
+
+    menu_Window->addMenu(keyboardCursorShapeMenu);
+}
+
+void MainWindow::setupCustomDirs()
+{
+    const QSettings settings;
+    const QString dir = QFileInfo(settings.fileName()).canonicalPath() + "/color-schemes/";
+    TermWidgetImpl::addCustomColorSchemeDir(dir);
 }
 
 void MainWindow::on_consoleTabulator_currentChanged(int)
