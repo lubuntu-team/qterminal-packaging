@@ -1,6 +1,7 @@
-/files
+/*.debhelper
 /*.log
 /*.substvars
+/debhelper-build-stamp
+/files
 
 /qterminal/
-/qterminal-dbg/

@@ -1,3 +1,17 @@
+qterminal (0.6.1~102-g58f4f72-1) unstable; urgency=medium
+
+  * Cherry-picking upstream version 0.6.1~102-g58f4f72.
+  * Fixed debian/.gitignore
+  * Added minimum versions for libqtermwidget5-0-dev (>= 0.6.1~)
+  * Bump Standards to 3.9.8, no changes needed
+  * Fixed VCS-fields, using https and plain /git/
+  * Fixed copyright Format to https
+  * Added LC_ALL=C.UTF-8 to rules for reproducible builds
+  * Added hardening options
+  * Set CMAKE_BUILD_TYPE=RelWithDebInfo
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 06 Aug 2016 16:48:43 +0200
+
 qterminal (0.6.0+20160104-1) unstable; urgency=medium
 
   [ Alf Gaida ]
