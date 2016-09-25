@@ -200,23 +200,43 @@ void TermWidgetHolder::splitCollapse(TermWidget * term)
     term->setParent(0);
     delete term;
 
-    int cnt = parent->findChildren<TermWidget*>().count();
-    if (cnt == 0)
+    QWidget *nextFocus = Q_NULLPTR;
+
+    // Collapse splitters containing a single element, excluding the top one.
+    if (parent->count() == 1)
     {
-        parent->setParent(0);
-        delete parent;
-        parent = Q_NULLPTR;
+        QSplitter *uselessSplitterParent = qobject_cast<QSplitter*>(parent->parent());
+        if (uselessSplitterParent != Q_NULLPTR) {
+            int idx = uselessSplitterParent->indexOf(parent);
+            assert(idx != -1);
+            QWidget *singleHeir = parent->widget(0);
+            uselessSplitterParent->insertWidget(idx, singleHeir);
+            if (qobject_cast<TermWidget*>(singleHeir))
+            {
+                nextFocus = singleHeir;
+            }
+            else
+            {
+                nextFocus = singleHeir->findChild<TermWidget*>();
+            }
+            parent->setParent(0);
+            delete parent;
+            // Make sure there's no access to the removed parent
+            parent = uselessSplitterParent;
+        }
     }
 
-    QList<TermWidget*> tlist = findChildren<TermWidget *>();
-    int localCnt = tlist.count();
-
-    if (localCnt > 0)
+    if (parent->count() > 0)
     {
-        tlist.at(0)->setFocus(Qt::OtherFocusReason);
-        update();
-        if (parent)
-            parent->update();
+        if (nextFocus)
+        {
+            nextFocus->setFocus(Qt::OtherFocusReason);
+        }
+        else
+        {
+            parent->widget(0)->setFocus(Qt::OtherFocusReason);
+        }
+        parent->update();
     }
     else
         emit finished();
@@ -281,13 +301,25 @@ TermWidget *TermWidgetHolder::newTerm(const QString & wdir, const QString & shel
             this, SLOT(splitCollapse(TermWidget *)));
     connect(w, SIGNAL(termGetFocus(TermWidget *)),
             this, SLOT(setCurrentTerminal(TermWidget *)));
+    connect(w, &TermWidget::termTitleChanged, this, &TermWidgetHolder::onTermTitleChanged);
 
     return w;
 }
 
 void TermWidgetHolder::setCurrentTerminal(TermWidget* term)
 {
+    TermWidget * old_current = m_currentTerm;
     m_currentTerm = term;
+    if (old_current != m_currentTerm)
+    {
+        if (m_currentTerm->impl()->isTitleChanged())
+        {
+            emit termTitleChanged(m_currentTerm->impl()->title(), m_currentTerm->impl()->icon());
+        } else
+        {
+            emit termTitleChanged(windowTitle(), QString{});
+        }
+    }
 }
 
 void TermWidgetHolder::handle_finished()
@@ -299,4 +331,11 @@ void TermWidgetHolder::handle_finished()
         assert(0);
     }
     splitCollapse(w);
+}
+
+void TermWidgetHolder::onTermTitleChanged(QString title, QString icon) const
+{
+    TermWidget * term = qobject_cast<TermWidget *>(sender());
+    if (m_currentTerm == term)
+        emit termTitleChanged(title, icon);
 }

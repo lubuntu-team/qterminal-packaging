@@ -1,3 +1,16 @@
+qterminal (0.7.0-1) experimental; urgency=medium
+
+  * New upstream release 0.7.0
+  * Added build dependency libqt5svg5-dev
+  * Bumped build dependency debhelper (>= 10)
+  * Bumped build dependency libqtxdg-dev (>= 2.0.0)
+  * Bumped build dependency libqtermwidget5-0-dev (>= 0.7.0)
+  * Bumped build dependency liblxqt-dev (>= 0.11.0)
+  * Bumped compat to 10
+  * Removed --parallel from rules, standard compat 10
+
+ -- Alf Gaida <agaida@siduction.org>  Mon, 26 Sep 2016 01:22:06 +0200
+
 qterminal (0.6.1~114-ga50f87c-1) experimental; urgency=medium
 
   * Cherry-picking upstream version 0.6.1~114-ga50f87c. 
