@@ -1,13 +1,30 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 project(qterminal)
 
 include(GNUInstallDirs)
 
-set(STR_VERSION "0.6.0")
+set(STR_VERSION "0.7.0")
 
+
+# additional cmake files
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+elseif(COMPILER_SUPPORTS_CXX0X)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+else()
+    message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. C++11 support is required")
+endif()
 
 # we need qpa/qplatformnativeinterface.h for global shortcut
 find_package(Qt5Gui REQUIRED)
@@ -18,6 +35,9 @@ elseif(UNIX)
     find_package(Qt5X11Extras REQUIRED)
 endif()
 find_package(QTermWidget5 REQUIRED)
+#Note: no run-time dependency on liblxqt, just a build dependency for lxqt_translate_ts/desktop
+find_package(lxqt REQUIRED)
+include(LXQtTranslateTs)
 message(STATUS "Qt version: ${Qt5Core_VERSION_STRING}")
 
 include(${QTERMWIDGET_USE_FILE})
@@ -87,25 +107,20 @@ set(QTERM_RCC_SRC
     src/icons.qrc
 )
 
-set(QTERM_TS
-    src/translations/qterminal_cs.ts
-    src/translations/qterminal_de.ts
-    src/translations/qterminal_el.ts
-    src/translations/qterminal_es.ts
-    src/translations/qterminal_et.ts
-    src/translations/qterminal_it.ts
-    src/translations/qterminal_pt.ts
-    src/translations/qterminal_hu.ts
-    src/translations/qterminal_ru.ts
-    src/translations/qterminal_ja.ts
-    src/translations/qterminal_zh_CN.ts
-    src/translations/qterminal_pt_BR.ts
-)
-
 qt5_wrap_ui( QTERM_UI ${QTERM_UI_SRC} )
 qt5_wrap_cpp( QTERM_MOC ${QTERM_MOC_SRC} )
 qt5_add_resources( QTERM_RCC ${QTERM_RCC_SRC} )
-qt5_add_translation( QTERM_QM ${QTERM_TS} )
+lxqt_translate_ts(QTERM_QM
+    TRANSLATION_DIR "src/translations"
+    PULL_TRANSLATIONS
+        ${PULL_TRANSLATIONS}
+    CLEAN_TRANSLATIONS
+        ${CLEAN_TRANSLATIONS}
+    TRANSLATIONS_REPO
+        ${TRANSLATIONS_REPO}
+    TRANSLATIONS_REFSPEC
+        ${TRANSLATIONS_REFSPEC}
+)
 
 include_directories(
     "${CMAKE_SOURCE_DIR}"

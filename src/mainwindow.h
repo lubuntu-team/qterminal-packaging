@@ -42,10 +42,8 @@ protected:
      bool event(QEvent* event);
 
 private:
-    QActionGroup *tabPosition, *scrollBarPosition;
-    QMenu *tabPosMenu, *scrollPosMenu;
-
-    QAction *renameSession;
+    QActionGroup *tabPosition, *scrollBarPosition, *keyboardCursorShape;
+    QMenu *tabPosMenu, *scrollPosMenu, *keyboardCursorShapeMenu;
 
     QString m_initWorkDir;
     QString m_initShell;
@@ -55,6 +53,7 @@ private:
     void setup_FileMenu_Actions();
     void setup_ActionsMenu_Actions();
     void setup_ViewMenu_Actions();
+    void setupCustomDirs();
 
     void closeEvent(QCloseEvent*);
 
@@ -86,5 +85,6 @@ private slots:
     void bookmarksDock_visibilityChanged(bool visible);
 
     void addNewTab();
+    void onCurrentTitleChanged(int index);
 };
 #endif //MAINWINDOW_H

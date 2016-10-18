@@ -1,3 +1,26 @@
+qterminal (0.7.0-2) unstable; urgency=medium
+
+  * Cherry-picking upstream release 0.7.0
+  * Sync debian foo with experimental
+  * Bumped compat to 10
+  * Removed --parallel from rules, standard compat 10
+  * Bumped Standards to 3.9.8, no changes needed
+  * Bumped minimum version debhelper (>= 10)
+  * Bumped minimum version libqtermwidget5-0-dev (>= 0.7.0)
+  * Added build dependency libkf5windowsystem-dev
+  * Added build dependency liblxqt0-dev (>= 0.11.0)
+  * Added build dependency libqt5svg5-dev
+  * Added build dependency libqt5xdg-dev (>= 3.0.0)
+  * Added Recommends qterminal-l10n
+  * Fixed VCS fields, using https, plain /git/ and pointing to the right branch
+  * Fixed copyright Format field, using https
+  * Exported LC_ALL=C.UTF-8, make builds reproducible 
+  * Added hardening options
+  * Added translation control to rules
+  * Set CMAKE_BUILD_TYPE=RelWithDebInfo
+
+ -- Alf Gaida <agaida@siduction.org>  Tue, 18 Oct 2016 20:59:13 +0200
+
 qterminal (0.6.1~102-g58f4f72-1) unstable; urgency=medium
 
   * Cherry-picking upstream version 0.6.1~102-g58f4f72.

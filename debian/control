@@ -7,14 +7,18 @@ Section: x11
 Priority: optional
 Build-Depends: debhelper (>= 10),
                cmake (>= 3.0.2),
-               libqtermwidget5-0-dev (>= 0.6.1~),
+               libkf5windowsystem-dev,
+               liblxqt0-dev (>= 0.11.0),
+               libqtermwidget5-0-dev (>= 0.7.0),
+               libqt5svg5-dev,
                libqt5x11extras5-dev,
+               libqt5xdg-dev (>= 2.0.0),
                libx11-dev,
                qtbase5-private-dev,
                qttools5-dev,
                qttools5-dev-tools
 Standards-Version: 3.9.8
-Vcs-Browser: https://anonscm.debian.org/git/pkg-lxqt/qterminal.git/?h=debian/sid
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-lxqt/qterminal.git/?h=debian/sid
 Vcs-Git: https://anonscm.debian.org/git/pkg-lxqt/qterminal.git -b debian/sid
 Homepage: https://github.com/lxde/qterminal
 
@@ -23,6 +27,7 @@ Provides: x-terminal-emulator
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
+Recommends: qterminal-l10n
 Description: Lightweight Qt terminal emulator
  QTerminal is a lightwight terminal emulator based on QTermWidget.
  .

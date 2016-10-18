@@ -35,6 +35,7 @@ class Properties
 {
     public:
         static Properties *Instance(const QString& filename = QString());
+        ~Properties();
 
         QFont defaultFont();
         void saveSettings();
@@ -63,6 +64,7 @@ class Properties
 
         int scrollBarPos;
         int tabsPos;
+        int keyboardCursorShape;
         bool hideTabBarWithOneTab;
         int m_motionAfterPaste;
 
@@ -89,6 +91,9 @@ class Properties
         int dropWidht;
         int dropHeight;
 
+        bool changeWindowTitle;
+        bool changeWindowIcon;
+
         QMap< QString, QAction * > actions;
 
 
@@ -101,7 +106,6 @@ class Properties
 
         explicit Properties(const QString& filename);
         Properties(const Properties &) {};
-        ~Properties();
 
         QSettings *m_settings;
 

@@ -68,6 +68,12 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
     tabsPos_comboBox->addItems(tabsPosList);
     tabsPos_comboBox->setCurrentIndex(Properties::Instance()->tabsPos);
 
+    /* keyboard cursor shape */
+    QStringList keyboardCursorShapeList;
+    keyboardCursorShapeList << tr("BlockCursor") << tr("UnderlineCursor") << tr("IBeamCursor");
+    keybCursorShape_comboBox->addItems(keyboardCursorShapeList);
+    keybCursorShape_comboBox->setCurrentIndex(Properties::Instance()->keyboardCursorShape);
+
     hideTabBarCheckBox->setChecked(Properties::Instance()->hideTabBarWithOneTab);
 
     // show main menu bar
@@ -119,6 +125,9 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
             this, SLOT(bookmarksButton_clicked()));
 
     terminalPresetComboBox->setCurrentIndex(Properties::Instance()->terminalsPreset);
+
+    changeWindowTitleCheckBox->setChecked(Properties::Instance()->changeWindowTitle);
+    changeWindowIconCheckBox->setChecked(Properties::Instance()->changeWindowIcon);
 }
 
 
@@ -159,6 +168,7 @@ void PropertiesDialog::apply()
 
     Properties::Instance()->scrollBarPos = scrollBarPos_comboBox->currentIndex();
     Properties::Instance()->tabsPos = tabsPos_comboBox->currentIndex();
+    Properties::Instance()->keyboardCursorShape = keybCursorShape_comboBox->currentIndex();
     Properties::Instance()->hideTabBarWithOneTab = hideTabBarCheckBox->isChecked();
     Properties::Instance()->menuVisible = showMenuCheckBox->isChecked();
     Properties::Instance()->m_motionAfterPaste = motionAfterPasting_comboBox->currentIndex();
@@ -180,6 +190,9 @@ void PropertiesDialog::apply()
     saveBookmarksFile(Properties::Instance()->bookmarksFile);
 
     Properties::Instance()->terminalsPreset = terminalPresetComboBox->currentIndex();
+
+    Properties::Instance()->changeWindowTitle = changeWindowTitleCheckBox->isChecked();
+    Properties::Instance()->changeWindowIcon = changeWindowIconCheckBox->isChecked();
 
     emit propertiesChanged();
 }
