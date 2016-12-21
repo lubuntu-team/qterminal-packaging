@@ -4,7 +4,8 @@ project(qterminal)
 
 include(GNUInstallDirs)
 
-set(STR_VERSION "0.7.0")
+set(STR_VERSION "0.7.1")
+set(LXQTBT_MINIMUM_VERSION "0.3.0")
 
 
 # additional cmake files
@@ -35,8 +36,7 @@ elseif(UNIX)
     find_package(Qt5X11Extras REQUIRED)
 endif()
 find_package(QTermWidget5 REQUIRED)
-#Note: no run-time dependency on liblxqt, just a build dependency for lxqt_translate_ts/desktop
-find_package(lxqt REQUIRED)
+find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
 include(LXQtTranslateTs)
 message(STATUS "Qt version: ${Qt5Core_VERSION_STRING}")
 
@@ -235,14 +235,3 @@ add_custom_target(lupdate
     COMMAND ${QT_LUPDATE_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/qterminal.pro"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
-
-# make dist custom target
-set(CPACK_PACKAGE_NAME "qterminal")
-set(CPACK_PACKAGE_VERSION ${STR_VERSION})
-set(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
-set(CPACK_IGNORE_FILES "/CVS/;/\\\\.svn/;/\\\\.git/;\\\\.swp$;\\\\.#;/#;\\\\.tar.gz$;/CMakeFiles/;CMakeCache.txt;\\\\.qm$;/build/;\\\\.diff$;.DS_Store'")
-set(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
-include(CPack)
-# simulate autotools' "make dist"
-add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)

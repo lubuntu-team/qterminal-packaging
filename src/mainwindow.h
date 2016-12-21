@@ -36,7 +36,8 @@ public:
                QWidget * parent = 0, Qt::WindowFlags f = 0);
     ~MainWindow();
 
-    bool dropMode() { return m_dropMode; }
+    bool dropMode() const { return m_dropMode; }
+    void setup_ContextMenu_Actions(QMenu* contextMenu) const;
 
 protected:
      bool event(QEvent* event);
@@ -50,6 +51,8 @@ private:
 
     QDockWidget *m_bookmarksDock;
 
+    void setup_Action(const char *name, QAction *action, const char *defaultShortcut, const QObject *receiver,
+                      const char *slot, QMenu *menu = NULL, const QVariant &data = QVariant());
     void setup_FileMenu_Actions();
     void setup_ActionsMenu_Actions();
     void setup_ViewMenu_Actions();
@@ -63,6 +66,9 @@ private:
     QxtGlobalShortcut m_dropShortcut;
     void realign();
     void setDropShortcut(QKeySequence dropShortCut);
+
+    bool hasMultipleTabs();
+    bool hasMultipleSubterminals();
 
 private slots:
     void on_consoleTabulator_currentChanged(int);
@@ -86,5 +92,7 @@ private slots:
 
     void addNewTab();
     void onCurrentTitleChanged(int index);
+
+    void aboutToShowActionsMenu();
 };
 #endif //MAINWINDOW_H

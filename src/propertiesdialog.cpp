@@ -37,6 +37,8 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
             this, SLOT(apply()));
     connect(changeFontButton, SIGNAL(clicked()),
             this, SLOT(changeFontButton_clicked()));
+    connect(chooseBackgroundImageButton, &QPushButton::clicked,
+            this, &PropertiesDialog::chooseBackgroundImageButton_clicked);
 
     QStringList emulations = QTermWidget::availableKeyBindings();
     QStringList colorSchemes = QTermWidget::availableColorSchemes();
@@ -48,6 +50,8 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
     int csix = colorSchemaCombo->findText(Properties::Instance()->colorScheme);
     if (csix != -1)
         colorSchemaCombo->setCurrentIndex(csix);
+
+    backgroundImageLineEdit->setText(Properties::Instance()->backgroundImage);
 
     emulationComboBox->addItems(emulations);
     int eix = emulationComboBox->findText(Properties::Instance()->emulation);
@@ -114,8 +118,12 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
     historyLimitedTo->setValue(Properties::Instance()->historyLimitedTo);
 
     dropShowOnStartCheckBox->setChecked(Properties::Instance()->dropShowOnStart);
+
     dropHeightSpinBox->setValue(Properties::Instance()->dropHeight);
+    dropHeightSpinBox->setMaximum(100);
     dropWidthSpinBox->setValue(Properties::Instance()->dropWidht);
+    dropWidthSpinBox->setMaximum(100);
+
     dropShortCutEdit->setText(Properties::Instance()->dropShortCut.toString());
 
     useBookmarksCheckBox->setChecked(Properties::Instance()->useBookmarks);
@@ -158,6 +166,7 @@ void PropertiesDialog::apply()
 
     Properties::Instance()->termTransparency = termTransparencyBox->value();
     Properties::Instance()->highlightCurrentTerminal = highlightCurrentCheckBox->isChecked();
+    Properties::Instance()->backgroundImage = backgroundImageLineEdit->text();
 
     Properties::Instance()->askOnExit = askOnExitCheckBox->isChecked();
 
@@ -214,6 +223,15 @@ void PropertiesDialog::changeFontButton_clicked()
         setFontSample(f);
 }
 
+void PropertiesDialog::chooseBackgroundImageButton_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(
+                            this, tr("Open or create bookmarks file"),
+                            QString(), tr("Images (*.bmp *.png *.xpm *.jpg)"));
+    if (!filename.isNull())
+        backgroundImageLineEdit->setText(filename);
+}
+
 void PropertiesDialog::saveShortcuts()
 {
     QList< QString > shortcutKeys = Properties::Instance()->actions.keys();
@@ -230,7 +248,10 @@ void PropertiesDialog::saveShortcuts()
         QKeySequence sequence = QKeySequence(item->text());
         QString sequenceString = sequence.toString();
 
-        keyAction->setShortcut(sequenceString);
+        QList<QKeySequence> shortcuts;
+        foreach (sequenceString, item->text().split('|'))
+            shortcuts.append(QKeySequence(sequenceString));
+        keyAction->setShortcuts(shortcuts);
     }
 }
 
@@ -245,9 +266,13 @@ void PropertiesDialog::setupShortcuts()
     {
         QString keyValue = shortcutKeys.at(x);
         QAction *keyAction = Properties::Instance()->actions[keyValue];
+        QStringList sequenceStrings;
+
+        foreach (QKeySequence shortcut, keyAction->shortcuts())
+            sequenceStrings.append(shortcut.toString());
 
         QTableWidgetItem *itemName = new QTableWidgetItem( tr(keyValue.toStdString().c_str()) );
-        QTableWidgetItem *itemShortcut = new QTableWidgetItem( keyAction->shortcut().toString() );
+        QTableWidgetItem *itemShortcut = new QTableWidgetItem( sequenceStrings.join('|') );
 
         itemName->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
 
