@@ -1,3 +1,17 @@
+qterminal (0.7.1-1) unstable; urgency=medium
+
+  * Cherry-picking upstream version 0.7.1
+  * Bumped minimum version libqtermwidget5-0-dev (>= 0.7.1)
+  * Removed build dependencies:
+    - cmake
+    - liblxqt0-dev
+    - libqt5xdg-dev
+    - qttools5-dev
+    - qttools5-dev-tools
+  * Added build dependency lxqt-build-tools
+
+ -- Alf Gaida <agaida@siduction.org>  Thu, 22 Dec 2016 00:35:57 +0100
+
 qterminal (0.7.0-2) unstable; urgency=medium
 
   * Cherry-picking upstream release 0.7.0

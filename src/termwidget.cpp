@@ -24,6 +24,7 @@
 #include "termwidget.h"
 #include "config.h"
 #include "properties.h"
+#include "mainwindow.h"
 
 static int TermWidgetCount = 0;
 
@@ -67,7 +68,7 @@ TermWidgetImpl::TermWidgetImpl(const QString & wdir, const QString & shell, QWid
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(customContextMenuCall(const QPoint &)));
 
-    connect(this, SIGNAL(urlActivated(QUrl)), this, SLOT(activateUrl(const QUrl&)));
+    connect(this, &QTermWidget::urlActivated, this, &TermWidgetImpl::activateUrl);
 
     startShellProgram();
 }
@@ -90,6 +91,7 @@ void TermWidgetImpl::propertiesChanged()
 
     setKeyBindings(Properties::Instance()->emulation);
     setTerminalOpacity(1.0 - Properties::Instance()->termTransparency/100.0);
+    setTerminalBackgroundImage(Properties::Instance()->backgroundImage);
 
     /* be consequent with qtermwidget.h here */
     switch(Properties::Instance()->scrollBarPos) {
@@ -123,23 +125,20 @@ void TermWidgetImpl::propertiesChanged()
 
 void TermWidgetImpl::customContextMenuCall(const QPoint & pos)
 {
-    QMenu menu;
-    menu.addAction(Properties::Instance()->actions[COPY_SELECTION]);
-    menu.addAction(Properties::Instance()->actions[PASTE_CLIPBOARD]);
-    menu.addAction(Properties::Instance()->actions[PASTE_SELECTION]);
-    menu.addAction(Properties::Instance()->actions[ZOOM_IN]);
-    menu.addAction(Properties::Instance()->actions[ZOOM_OUT]);
-    menu.addAction(Properties::Instance()->actions[ZOOM_RESET]);
-    menu.addSeparator();
-    menu.addAction(Properties::Instance()->actions[CLEAR_TERMINAL]);
-    menu.addAction(Properties::Instance()->actions[SPLIT_HORIZONTAL]);
-    menu.addAction(Properties::Instance()->actions[SPLIT_VERTICAL]);
-#warning TODO/FIXME: disable the action when there is only one terminal
-    menu.addAction(Properties::Instance()->actions[SUB_COLLAPSE]);
-    menu.addSeparator();
-    menu.addAction(Properties::Instance()->actions[TOGGLE_MENU]);
-    menu.addAction(Properties::Instance()->actions[PREFERENCES]);
-    menu.exec(mapToGlobal(pos));
+    QMenu* contextMenu = new QMenu(this);
+
+    QList<QAction*> actions = filterActions(pos);
+    for (auto& action : actions)
+    {
+        contextMenu->addAction(action);
+    }
+
+    contextMenu->addSeparator();
+
+    const MainWindow *main = qobject_cast<MainWindow*>(window());
+    main->setup_ContextMenu_Actions(contextMenu);
+
+    contextMenu->exec(mapToGlobal(pos));
 }
 
 void TermWidgetImpl::zoomIn()
@@ -166,8 +165,8 @@ void TermWidgetImpl::zoomReset()
 //    Properties::Instance()->saveSettings();
 }
 
-void TermWidgetImpl::activateUrl(const QUrl & url) {
-    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+void TermWidgetImpl::activateUrl(const QUrl & url, bool fromContextMenu) {
+    if (QApplication::keyboardModifiers() & Qt::ControlModifier || fromContextMenu) {
         QDesktopServices::openUrl(url);
     }
 }
