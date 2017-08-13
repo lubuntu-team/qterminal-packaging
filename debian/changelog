@@ -1,3 +1,11 @@
+qterminal (0.7.1-2) unstable; urgency=medium
+
+  * Fixed appdata format and location
+  * Bumped Standards to 4.0.0, no changes needed
+  * Bumpded copyright year
+
+ -- Alf Gaida <agaida@siduction.org>  Sun, 13 Aug 2017 21:54:04 +0200
+
 qterminal (0.7.1-1) unstable; urgency=medium
 
   * Cherry-picking upstream version 0.7.1
