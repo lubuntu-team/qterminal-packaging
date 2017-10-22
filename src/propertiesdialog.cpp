@@ -26,6 +26,7 @@
 #include "properties.h"
 #include "fontdialog.h"
 #include "config.h"
+#include "qterminalapp.h"
 
 
 PropertiesDialog::PropertiesDialog(QWidget *parent)
@@ -136,6 +137,10 @@ PropertiesDialog::PropertiesDialog(QWidget *parent)
 
     changeWindowTitleCheckBox->setChecked(Properties::Instance()->changeWindowTitle);
     changeWindowIconCheckBox->setChecked(Properties::Instance()->changeWindowIcon);
+
+    trimPastedTrailingNewlinesCheckBox->setChecked(Properties::Instance()->trimPastedTrailingNewlines);
+    confirmMultilinePasteCheckBox->setChecked(Properties::Instance()->confirmMultilinePaste);
+
 }
 
 
@@ -203,6 +208,9 @@ void PropertiesDialog::apply()
     Properties::Instance()->changeWindowTitle = changeWindowTitleCheckBox->isChecked();
     Properties::Instance()->changeWindowIcon = changeWindowIconCheckBox->isChecked();
 
+    Properties::Instance()->trimPastedTrailingNewlines = trimPastedTrailingNewlinesCheckBox->isChecked();
+    Properties::Instance()->confirmMultilinePaste = confirmMultilinePasteCheckBox->isChecked();
+
     emit propertiesChanged();
 }
 
@@ -226,7 +234,7 @@ void PropertiesDialog::changeFontButton_clicked()
 void PropertiesDialog::chooseBackgroundImageButton_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(
-                            this, tr("Open or create bookmarks file"),
+                            this, tr("Choose a background image"),
                             QString(), tr("Images (*.bmp *.png *.xpm *.jpg)"));
     if (!filename.isNull())
         backgroundImageLineEdit->setText(filename);
@@ -234,7 +242,8 @@ void PropertiesDialog::chooseBackgroundImageButton_clicked()
 
 void PropertiesDialog::saveShortcuts()
 {
-    QList< QString > shortcutKeys = Properties::Instance()->actions.keys();
+    QMap<QString, QAction*> actions = QTerminalApp::Instance()->getWindowList()[0]->leaseActions();
+    QList< QString > shortcutKeys = actions.keys();
     int shortcutCount = shortcutKeys.count();
 
     shortcutsWidget->setRowCount( shortcutCount );
@@ -242,7 +251,7 @@ void PropertiesDialog::saveShortcuts()
     for( int x=0; x < shortcutCount; x++ )
     {
         QString keyValue = shortcutKeys.at(x);
-        QAction *keyAction = Properties::Instance()->actions[keyValue];
+        QAction *keyAction = actions[keyValue];
 
         QTableWidgetItem *item = shortcutsWidget->item(x, 1);
         QKeySequence sequence = QKeySequence(item->text());
@@ -253,11 +262,13 @@ void PropertiesDialog::saveShortcuts()
             shortcuts.append(QKeySequence(sequenceString));
         keyAction->setShortcuts(shortcuts);
     }
+    Properties::Instance()->saveSettings();
 }
 
 void PropertiesDialog::setupShortcuts()
 {
-    QList< QString > shortcutKeys = Properties::Instance()->actions.keys();
+    QMap<QString, QAction*> actions = QTerminalApp::Instance()->getWindowList()[0]->leaseActions();
+    QList< QString > shortcutKeys = actions.keys();
     int shortcutCount = shortcutKeys.count();
 
     shortcutsWidget->setRowCount( shortcutCount );
@@ -265,10 +276,10 @@ void PropertiesDialog::setupShortcuts()
     for( int x=0; x < shortcutCount; x++ )
     {
         QString keyValue = shortcutKeys.at(x);
-        QAction *keyAction = Properties::Instance()->actions[keyValue];
+        QAction *keyAction = actions[keyValue];
         QStringList sequenceStrings;
 
-        foreach (QKeySequence shortcut, keyAction->shortcuts())
+        foreach (const QKeySequence &shortcut, keyAction->shortcuts())
             sequenceStrings.append(shortcut.toString());
 
         QTableWidgetItem *itemName = new QTableWidgetItem( tr(keyValue.toStdString().c_str()) );

@@ -4,27 +4,14 @@ project(qterminal)
 
 include(GNUInstallDirs)
 
-set(STR_VERSION "0.7.1")
-set(LXQTBT_MINIMUM_VERSION "0.3.0")
+# qterminal version
+set(STR_VERSION "0.8.0")
+set(LXQTBT_MINIMUM_VERSION "0.4.0")
 
-
-# additional cmake files
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files" OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
-endif()
-
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-elseif(COMPILER_SUPPORTS_CXX0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-else()
-    message(FATAL "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. C++11 support is required")
 endif()
 
 # we need qpa/qplatformnativeinterface.h for global shortcut
@@ -34,13 +21,13 @@ find_package(Qt5LinguistTools REQUIRED)
 if(APPLE)
 elseif(UNIX)
     find_package(Qt5X11Extras REQUIRED)
+    find_package(Qt5DBus)
 endif()
 find_package(QTermWidget5 REQUIRED)
 find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
 include(LXQtTranslateTs)
-message(STATUS "Qt version: ${Qt5Core_VERSION_STRING}")
-
-include(${QTERMWIDGET_USE_FILE})
+include(LXQtCompilerSettings NO_POLICY_SCOPE)
+message(STATUS "Qt version: ${Qt5Core_VERSION}")
 
 # TODO remove Qxt
 message(STATUS "Using bundled Qxt...")
@@ -56,8 +43,6 @@ elseif(UNIX)
 endif()
 
 add_definitions(-DSTR_VERSION=\"${STR_VERSION}\")
-add_definitions(${Qt5X11Extras_DEFINITIONS})
-
 
 set(EXE_NAME qterminal)
 
@@ -67,13 +52,16 @@ set(QTERM_SRC
     src/tabwidget.cpp
     src/termwidget.cpp
     src/termwidgetholder.cpp
+    src/terminalconfig.cpp
     src/properties.cpp
     src/propertiesdialog.cpp
     src/bookmarkswidget.cpp
     src/fontdialog.cpp
+    src/dbusaddressable.cpp
 )
 
 set(QTERM_MOC_SRC
+    src/qterminalapp.h
     src/mainwindow.h
     src/tabwidget.h
     src/termwidget.h
@@ -82,6 +70,17 @@ set(QTERM_MOC_SRC
     src/bookmarkswidget.h
     src/fontdialog.h
 )
+
+
+if (Qt5DBus_FOUND)
+    add_definitions(-DHAVE_QDBUS)
+    QT5_ADD_DBUS_ADAPTOR(QTERM_SRC src/org.lxqt.QTerminal.Window.xml mainwindow.h MainWindow)
+    QT5_ADD_DBUS_ADAPTOR(QTERM_SRC src/org.lxqt.QTerminal.Tab.xml termwidgetholder.h TermWidgetHolder)
+    QT5_ADD_DBUS_ADAPTOR(QTERM_SRC src/org.lxqt.QTerminal.Terminal.xml termwidget.h TermWidget)
+    QT5_ADD_DBUS_ADAPTOR(QTERM_SRC src/org.lxqt.QTerminal.Process.xml qterminalapp.h QTerminalApp)
+    set(QTERM_MOC_SRC ${QTERM_MOC_SRC} src/dbusaddressable.h)
+    message(STATUS "Building with Qt5DBus support")
+endif()
 
 if(NOT QXT_FOUND)
     set(QTERM_SRC ${QTERM_SRC} src/third-party/qxtglobalshortcut.cpp)
@@ -111,6 +110,12 @@ qt5_wrap_ui( QTERM_UI ${QTERM_UI_SRC} )
 qt5_wrap_cpp( QTERM_MOC ${QTERM_MOC_SRC} )
 qt5_add_resources( QTERM_RCC ${QTERM_RCC_SRC} )
 lxqt_translate_ts(QTERM_QM
+    UPDATE_TRANSLATIONS
+        ${UPDATE_TRANSLATIONS}
+    SOURCES
+        ${QTERM_SRC}
+        ${QTERM_UI_SRC}
+        ${QTERM_MOC_SRC}
     TRANSLATION_DIR "src/translations"
     PULL_TRANSLATIONS
         ${PULL_TRANSLATIONS}
@@ -123,10 +128,9 @@ lxqt_translate_ts(QTERM_QM
 )
 
 include_directories(
-    "${CMAKE_SOURCE_DIR}"
-    "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_BINARY_DIR}"
-    ${QTERMWIDGET_INCLUDE_DIRS}
+    "${PROJECT_SOURCE_DIR}"
+    "${PROJECT_SOURCE_DIR}/src"
+    "${PROJECT_BINARY_DIR}"
     ${QXT_INCLUDE_DIRS}
 )
 if(X11_FOUND)
@@ -170,12 +174,16 @@ add_executable(${EXE_NAME} ${GUI_TYPE}
     ${QTERM_QM}
 )
 target_link_libraries(${EXE_NAME}
-    ${QTERMWIDGET_QT_LIBRARIES}
-    ${QTERMWIDGET_LIBRARIES}
+    Qt5::Gui
+    qtermwidget5
     util
 )
 if(QXT_FOUND)
     target_link_libraries(${EXE_NAME} ${QXT_CORE_LIB} ${QXT_GUI_LIB})
+endif()
+
+if (Qt5DBus_FOUND)
+    target_link_libraries(${EXE_NAME} ${Qt5DBus_LIBRARIES})
 endif()
 
 if(APPLE)
@@ -226,12 +234,3 @@ else()
 
     install(FILES ${QTERM_QM} DESTINATION ${CMAKE_INSTALL_PREFIX}/${EXE_NAME}.app/Contents/translations)
 endif()
-
-
-# make lupdate
-# it generates new translation files
-add_custom_target(lupdate
-    ${QT_QMAKE_EXECUTABLE} -project -o "${CMAKE_CURRENT_BINARY_DIR}/qterminal.pro"
-    COMMAND ${QT_LUPDATE_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/qterminal.pro"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-)

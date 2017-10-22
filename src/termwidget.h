@@ -20,9 +20,11 @@
 #define TERMWIDGET_H
 
 #include <qtermwidget.h>
+#include "terminalconfig.h"
 
+#include <QClipboard>
 #include <QAction>
-
+#include "dbusaddressable.h"
 
 class TermWidgetImpl : public QTermWidget
 {
@@ -32,8 +34,9 @@ class TermWidgetImpl : public QTermWidget
 
     public:
 
-        TermWidgetImpl(const QString & wdir, const QString & shell=QString(), QWidget * parent=0);
+        TermWidgetImpl(TerminalConfig &cfg, QWidget * parent=0);
         void propertiesChanged();
+        void paste(QClipboard::Mode mode);
 
     signals:
         void renameSession();
@@ -43,6 +46,8 @@ class TermWidgetImpl : public QTermWidget
         void zoomIn();
         void zoomOut();
         void zoomReset();
+        void pasteSelection();
+        void pasteClipboard();
 
     private slots:
         void customContextMenuCall(const QPoint & pos);
@@ -50,7 +55,7 @@ class TermWidgetImpl : public QTermWidget
 };
 
 
-class TermWidget : public QWidget
+class TermWidget : public QWidget, public DBusAddressable
 {
     Q_OBJECT
 
@@ -59,12 +64,20 @@ class TermWidget : public QWidget
     QColor m_border;
 
     public:
-        TermWidget(const QString & wdir, const QString & shell=QString(), QWidget * parent=0);
+        TermWidget(TerminalConfig &cfg, QWidget * parent=0);
 
         void propertiesChanged(); 
         QStringList availableKeyBindings() { return m_term->availableKeyBindings(); }
 
         TermWidgetImpl * impl() { return m_term; }
+
+        #ifdef HAVE_QDBUS
+        QDBusObjectPath splitHorizontal(const QHash<QString,QVariant> &termArgs);
+        QDBusObjectPath splitVertical(const QHash<QString,QVariant> &termArgs);
+        QDBusObjectPath getTab();
+        void sendText(const QString text);
+        void closeTerminal();
+        #endif
 
     signals:
         void finished();
@@ -80,6 +93,7 @@ class TermWidget : public QWidget
 
     protected:
         void paintEvent (QPaintEvent * event);
+        bool eventFilter(QObject * obj, QEvent * evt) override;
 
     private slots:
         void term_termGetFocus();

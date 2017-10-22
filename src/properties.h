@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QtCore>
 #include <QFont>
-#include <QAction>
 
 typedef QString Session;
 
@@ -95,8 +94,8 @@ class Properties
         bool changeWindowTitle;
         bool changeWindowIcon;
 
-        QMap< QString, QAction * > actions;
-
+        bool confirmMultilinePaste;
+        bool trimPastedTrailingNewlines;
 
 
     private:

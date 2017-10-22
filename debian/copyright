@@ -4,6 +4,7 @@ Source: https://github.com/lxde/qterminal.git
 
 Files: *
 Copyright: 2010-2016 Petr Vanek <petr@scribus.info>
+           2016-2017 LXQt Team
 License: GPL-2+
 
 Files: src/config.h
