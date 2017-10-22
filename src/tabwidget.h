@@ -21,7 +21,14 @@
 
 #include <QTabWidget>
 #include <QMap>
+#include <QAction>
 
+#ifdef HAVE_QDBUS
+    #include <QtDBus/QtDBus>
+    #include "dbusaddressable.h"
+#endif
+
+#include "terminalconfig.h"
 #include "properties.h"
 
 class TermWidgetHolder;
@@ -40,7 +47,7 @@ public:
     void showHideTabBar();
 
 public slots:
-    int addNewTab(const QString& shell_program = QString());
+    int addNewTab(TerminalConfig cfg);
     void removeTab(int);
     void removeCurrentTab();
     int switchToRight();
@@ -50,10 +57,12 @@ public slots:
     void moveRight();
     void renameSession(int);
     void renameCurrentSession();
-    void setWorkDirectory(const QString&);
 
-    void switchNextSubterminal();
-    void switchPrevSubterminal();
+    void switchLeftSubterminal();
+    void switchRightSubterminal();
+    void switchTopSubterminal();
+    void switchBottomSubterminal();
+
     void splitHorizontally();
     void splitVertically();
     void splitCollapse();
@@ -100,7 +109,6 @@ protected slots:
 
 private:
     int tabNumerator;
-    QString work_dir;
     /* re-order naming of the tabs then removeCurrentTab() */
     void renameTabsAfterRemove();
 };

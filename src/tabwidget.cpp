@@ -21,10 +21,12 @@
 #include <QMouseEvent>
 #include <QMenu>
 
+#include "mainwindow.h"
 #include "termwidgetholder.h"
 #include "tabwidget.h"
 #include "config.h"
 #include "properties.h"
+#include "qterminalapp.h"
 
 
 #define TAB_INDEX_PROPERTY "tab_index"
@@ -59,26 +61,17 @@ TermWidgetHolder * TabWidget::terminalHolder()
     return reinterpret_cast<TermWidgetHolder*>(widget(currentIndex()));
 }
 
-void TabWidget::setWorkDirectory(const QString& dir)
-{
-    this->work_dir = dir;
-}
 
-int TabWidget::addNewTab(const QString & shell_program)
+int TabWidget::addNewTab(TerminalConfig config)
 {
     tabNumerator++;
     QString label = QString(tr("Shell No. %1")).arg(tabNumerator);
 
     TermWidgetHolder *ch = terminalHolder();
-    QString cwd(work_dir);
-    if (Properties::Instance()->useCWD && ch)
-    {
-        cwd = ch->currentTerminal()->impl()->workingDirectory();
-        if (cwd.isEmpty())
-            cwd = work_dir;
-    }
+    if (ch)
+        config.provideCurrentDirectory(ch->currentTerminal()->impl()->workingDirectory());
 
-    TermWidgetHolder *console = new TermWidgetHolder(cwd, shell_program, this);
+    TermWidgetHolder *console = new TermWidgetHolder(config, this);
     console->setWindowTitle(label);
     connect(console, SIGNAL(finished()), SLOT(removeFinished()));
     connect(console, SIGNAL(lastTerminalClosed()), this, SLOT(removeFinished()));
@@ -96,29 +89,40 @@ int TabWidget::addNewTab(const QString & shell_program)
     return index;
 }
 
-void TabWidget::switchNextSubterminal()
+void TabWidget::switchLeftSubterminal()
 {
-    terminalHolder()->switchNextSubterminal();
+    terminalHolder()->directionalNavigation(NavigationDirection::Left);
 }
 
-void TabWidget::switchPrevSubterminal()
+void TabWidget::switchRightSubterminal()
 {
-    terminalHolder()->switchPrevSubterminal();
+    terminalHolder()->directionalNavigation(NavigationDirection::Right);
+}
+
+void TabWidget::switchTopSubterminal() {
+    terminalHolder()->directionalNavigation(NavigationDirection::Top);
+}
+
+void TabWidget::switchBottomSubterminal() {
+    terminalHolder()->directionalNavigation(NavigationDirection::Bottom);
 }
 
 void TabWidget::splitHorizontally()
 {
     terminalHolder()->splitHorizontal(terminalHolder()->currentTerminal());
+    findParent<MainWindow>(this)->updateDisabledActions();
 }
 
 void TabWidget::splitVertically()
 {
     terminalHolder()->splitVertical(terminalHolder()->currentTerminal());
+    findParent<MainWindow>(this)->updateDisabledActions();
 }
 
 void TabWidget::splitCollapse()
 {
     terminalHolder()->splitCollapse(terminalHolder()->currentTerminal());
+    findParent<MainWindow>(this)->updateDisabledActions();
 }
 
 void TabWidget::copySelection()
@@ -206,10 +210,11 @@ void TabWidget::renameTabsAfterRemove()
 void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu(this);
+    QMap< QString, QAction * > actions = findParent<MainWindow>(this)->leaseActions();
 
     QAction *close = menu.addAction(QIcon::fromTheme("document-close"), tr("Close session"));
-    QAction *rename = menu.addAction(Properties::Instance()->actions[RENAME_SESSION]->text());
-    rename->setShortcut(Properties::Instance()->actions[RENAME_SESSION]->shortcut());
+    QAction *rename = menu.addAction(actions[RENAME_SESSION]->text());
+    rename->setShortcut(actions[RENAME_SESSION]->shortcut());
     rename->blockSignals(true);
 
     int tabIndex = tabBar()->tabAt(event->pos());
@@ -230,7 +235,10 @@ bool TabWidget::eventFilter(QObject *obj, QEvent *event)
         // clicks on free space - open new tab
         int index = tabBar()->tabAt(e->pos());
         if (index == -1)
-            addNewTab();
+        {
+            TerminalConfig defaultConfig;
+            addNewTab(defaultConfig);
+        }
         else
             renameSession(index);
         return true;
@@ -299,6 +307,7 @@ int TabWidget::switchToRight()
         setCurrentIndex(next_pos);
     else
         setCurrentIndex(0);
+    findParent<MainWindow>(this)->updateDisabledActions();
     return currentIndex();
 }
 
@@ -309,6 +318,7 @@ int TabWidget::switchToLeft()
         setCurrentIndex(count() - 1);
     else
         setCurrentIndex(previous_pos);
+    findParent<MainWindow>(this)->updateDisabledActions();
     return currentIndex();
 }
 
@@ -426,33 +436,36 @@ void TabWidget::loadSession()
 
 void TabWidget::preset2Horizontal()
 {
-    int ix = TabWidget::addNewTab();
+    TerminalConfig defaultConfig;
+    int ix = TabWidget::addNewTab(defaultConfig);
     TermWidgetHolder* term = reinterpret_cast<TermWidgetHolder*>(widget(ix));
     term->splitHorizontal(term->currentTerminal());
     // switch to the 1st terminal
-    term->switchNextSubterminal();
+    term->directionalNavigation(NavigationDirection::Left);
 }
 
 void TabWidget::preset2Vertical()
 {
-    int ix = TabWidget::addNewTab();
+    TerminalConfig defaultConfig;
+    int ix = TabWidget::addNewTab(defaultConfig);
     TermWidgetHolder* term = reinterpret_cast<TermWidgetHolder*>(widget(ix));
     term->splitVertical(term->currentTerminal());
     // switch to the 1st terminal
-    term->switchNextSubterminal();
+    term->directionalNavigation(NavigationDirection::Left);
 }
 
 void TabWidget::preset4Terminals()
 {
-    int ix = TabWidget::addNewTab();
+    TerminalConfig defaultConfig;
+    int ix = TabWidget::addNewTab(defaultConfig);
     TermWidgetHolder* term = reinterpret_cast<TermWidgetHolder*>(widget(ix));
     term->splitVertical(term->currentTerminal());
     term->splitHorizontal(term->currentTerminal());
-    term->switchNextSubterminal();
-    term->switchNextSubterminal();
+    term->directionalNavigation(NavigationDirection::Left);
+
     term->splitHorizontal(term->currentTerminal());
     // switch to the 1st terminal
-    term->switchNextSubterminal();
+    term->directionalNavigation(NavigationDirection::Top);
 }
 
 void TabWidget::showHideTabBar()

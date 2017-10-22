@@ -20,18 +20,31 @@
 #include <QSplitter>
 #include <QInputDialog>
 
+#ifdef HAVE_QDBUS
+    #include <QtDBus/QtDBus>
+    #include "tabadaptor.h"
+#endif
+
+#include "qterminalapp.h"
+#include "mainwindow.h"
 #include "termwidgetholder.h"
 #include "termwidget.h"
 #include "properties.h"
 #include <assert.h>
+#include <climits>
+#include <algorithm>
 
 
-TermWidgetHolder::TermWidgetHolder(const QString & wdir, const QString & shell, QWidget * parent)
-    : QWidget(parent),
-      m_wdir(wdir),
-      m_shell(shell),
-      m_currentTerm(0)
+TermWidgetHolder::TermWidgetHolder(TerminalConfig &config, QWidget * parent)
+    : QWidget(parent)
+      #ifdef HAVE_QDBUS
+      , DBusAddressable("/tabs")
+      #endif
 {
+    #ifdef HAVE_QDBUS
+    new TabAdaptor(this);
+    QDBusConnection::sessionBus().registerObject(getDbusPathString(), this);
+    #endif
     setFocusPolicy(Qt::NoFocus);
     QGridLayout * lay = new QGridLayout(this);
     lay->setSpacing(0);
@@ -39,9 +52,10 @@ TermWidgetHolder::TermWidgetHolder(const QString & wdir, const QString & shell, 
 
     QSplitter *s = new QSplitter(this);
     s->setFocusPolicy(Qt::NoFocus);
-    TermWidget *w = newTerm();
+    TermWidget *w = newTerm(config);
     s->addWidget(w);
     lay->addWidget(s);
+    m_currentTerm = w;
 
     setLayout(lay);
 }
@@ -124,33 +138,64 @@ void TermWidgetHolder::setWDir(const QString & wdir)
     m_wdir = wdir;
 }
 
-void TermWidgetHolder::switchNextSubterminal()
-{
-    // TODO/FIXME: merge switchPrevSubterminal with switchNextSubterminal
-    QList<TermWidget*> l = findChildren<TermWidget*>();
-    int ix = -1;
-    foreach (TermWidget * w, l)
-    {
-        ++ix;
-        if (w->impl()->hasFocus())
-        {
-            break;
-        }
-    }
+typedef struct  {
+    QPoint topLeft;
+    QPoint middle;
+    QPoint bottomRight;
+} NavigationData;
 
-    if (ix < l.count()-1)
-    {
-        l.at(ix+1)->impl()->setFocus(Qt::OtherFocusReason);
-    }
-    else if (ix == l.count()-1)
-    {
-        l.at(0)->impl()->setFocus(Qt::OtherFocusReason);
+static void transpose(QPoint *point) {
+    int x = point->x();
+    point->setX(point->y());
+    point->setY(x);
+}
+
+static void transposeTransform(NavigationData *point) {
+    transpose(&point->topLeft);
+    transpose(&point->middle);
+    transpose(&point->bottomRight);
+}
+
+static void flipTransform(NavigationData *point) {
+    QPoint oldTopLeft = point->topLeft;
+    point->topLeft = -(point->bottomRight);
+    point->bottomRight = -(oldTopLeft);
+    point->middle = -(point->middle);
+}
+
+static void normalizeToRight(NavigationData *point, NavigationDirection dir) {
+    switch (dir) {
+        case Left:
+            flipTransform(point);
+            break;
+        case Right:
+            // No-op
+            break;
+        case Top:
+            flipTransform(point);
+            transposeTransform(point);
+            break;
+        case Bottom:
+            transposeTransform(point);
+            break;
+        default:
+            assert("Invalid navigation");
+            return;
     }
 }
 
-void TermWidgetHolder::switchPrevSubterminal()
-{
-    // TODO/FIXME: merge switchPrevSubterminal with switchNextSubterminal
+static NavigationData getNormalizedDimensions(QWidget *w, NavigationDirection dir) {
+    NavigationData nd;
+    nd.topLeft = w->mapTo(w->window(), QPoint(0, 0));
+    nd.middle = w->mapTo(w->window(), QPoint(w->width() / 2, w->height() / 2));
+    nd.bottomRight = w->mapTo(w->window(), QPoint(w->width(), w->height()));
+    normalizeToRight(&nd, dir);
+    return nd;
+}
+
+
+void TermWidgetHolder::directionalNavigation(NavigationDirection dir) {
+    // Find an active widget
     QList<TermWidget*> l = findChildren<TermWidget*>();
     int ix = -1;
     foreach (TermWidget * w, l)
@@ -161,14 +206,50 @@ void TermWidgetHolder::switchPrevSubterminal()
             break;
         }
     }
-
-    if (ix > 0)
+    if (ix > l.count())
     {
-        l.at(ix-1)->impl()->setFocus(Qt::OtherFocusReason);
+        l.at(0)->impl()->setFocus(Qt::OtherFocusReason);
+        return;
     }
-    else if (ix == 0)
+
+    // Found an active widget
+    TermWidget *w = l.at(ix);
+    NavigationData from = getNormalizedDimensions(w, dir);
+
+    // Search parent that contains point of interest (right edge middlepoint)
+    QPoint poi = QPoint(from.bottomRight.x(), from.middle.y());
+
+    // Perform a search for a TermWidget, where x() is strictly higher than
+    // poi.x(), y() is strictly less than poi.y(), and prioritizing, in order,
+    // lower x(), and lower distance between poi.y() and corners.
+
+    // Only "Right navigation" implementation is necessary -- other cases
+    // are normalized to this one.
+
+    l = findChildren<TermWidget*>();
+    int lowestX = INT_MAX;
+    int lowestMidpointDistance = INT_MAX;
+    TermWidget *fittest = NULL;
+    foreach (TermWidget * w, l) 
     {
-        l.at(l.count()-1)->impl()->setFocus(Qt::OtherFocusReason);
+        NavigationData contenderDims = getNormalizedDimensions(w, dir);
+        int midpointDistance = std::min(
+            abs(poi.y() - contenderDims.topLeft.y()),
+            abs(poi.y() - contenderDims.bottomRight.y())
+        );
+        if (contenderDims.topLeft.x() > poi.x()) 
+        {
+            if (contenderDims.topLeft.x() > lowestX)
+                continue;
+            if (midpointDistance > lowestMidpointDistance)
+                continue;
+            lowestX = contenderDims.topLeft.x();
+            lowestMidpointDistance = midpointDistance;
+            fittest = w;
+        }
+    }
+    if (fittest != NULL) {
+        fittest->impl()->setFocus(Qt::OtherFocusReason);
     }
 }
 
@@ -185,12 +266,14 @@ void TermWidgetHolder::propertiesChanged()
 
 void TermWidgetHolder::splitHorizontal(TermWidget * term)
 {
-    split(term, Qt::Vertical);
+    TerminalConfig defaultConfig;
+    split(term, Qt::Vertical, defaultConfig);
 }
 
 void TermWidgetHolder::splitVertical(TermWidget * term)
 {
-    split(term, Qt::Horizontal);
+    TerminalConfig defaultConfig;
+    split(term, Qt::Horizontal, defaultConfig);
 }
 
 void TermWidgetHolder::splitCollapse(TermWidget * term)
@@ -242,7 +325,7 @@ void TermWidgetHolder::splitCollapse(TermWidget * term)
         emit finished();
 }
 
-void TermWidgetHolder::split(TermWidget *term, Qt::Orientation orientation)
+TermWidget * TermWidgetHolder::split(TermWidget *term, Qt::Orientation orientation, TerminalConfig cfg)
 {
     QSplitter *parent = qobject_cast<QSplitter *>(term->parent());
     assert(parent);
@@ -257,16 +340,9 @@ void TermWidgetHolder::split(TermWidget *term, Qt::Orientation orientation)
     s->setFocusPolicy(Qt::NoFocus);
     s->insertWidget(0, term);
 
-    // wdir settings
-    QString wd(m_wdir);
-    if (Properties::Instance()->useCWD)
-    {
-        wd = term->impl()->workingDirectory();
-        if (wd.isEmpty())
-            wd = m_wdir;
-    }
-
-    TermWidget * w = newTerm(wd);
+    cfg.provideCurrentDirectory(term->impl()->workingDirectory());
+    
+    TermWidget * w = newTerm(cfg);
     s->insertWidget(1, w);
     s->setSizes(sizes);
 
@@ -274,19 +350,12 @@ void TermWidgetHolder::split(TermWidget *term, Qt::Orientation orientation)
     parent->setSizes(parentSizes);
 
     w->setFocus(Qt::OtherFocusReason);
+    return w;
 }
 
-TermWidget *TermWidgetHolder::newTerm(const QString & wdir, const QString & shell)
+TermWidget *TermWidgetHolder::newTerm(TerminalConfig &cfg)
 {
-    QString wd(wdir);
-    if (wd.isEmpty())
-        wd = m_wdir;
-
-    QString sh(shell);
-    if (shell.isEmpty())
-        sh = m_shell;
-
-    TermWidget *w = new TermWidget(wd, sh, this);
+    TermWidget *w = new TermWidget(cfg, this);
     // proxy signals
     connect(w, SIGNAL(renameSession()), this, SIGNAL(renameSession()));
     connect(w, SIGNAL(removeCurrentSession()), this, SIGNAL(lastTerminalClosed()));
@@ -339,3 +408,40 @@ void TermWidgetHolder::onTermTitleChanged(QString title, QString icon) const
     if (m_currentTerm == term)
         emit termTitleChanged(title, icon);
 }
+
+#ifdef HAVE_QDBUS
+
+QDBusObjectPath TermWidgetHolder::getActiveTerminal()
+{
+    if (m_currentTerm != NULL)
+    {
+        return m_currentTerm->getDbusPath();
+    }
+    return QDBusObjectPath();
+}
+
+QList<QDBusObjectPath> TermWidgetHolder::getTerminals()
+{
+    QList<QDBusObjectPath> terminals;
+    foreach (TermWidget* w, findChildren<TermWidget*>())
+    {
+        terminals.push_back(w->getDbusPath());
+    }
+    return terminals;
+}
+
+QDBusObjectPath TermWidgetHolder::getWindow()
+{
+    return findParent<MainWindow>(this)->getDbusPath();
+}
+
+void TermWidgetHolder::closeTab()
+{
+    QTabWidget *parent = findParent<QTabWidget>(this);
+    int idx = parent->indexOf(this);
+    assert(idx != -1);
+    parent->tabCloseRequested(idx);
+}
+
+#endif
+
