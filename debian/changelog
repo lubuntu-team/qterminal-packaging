@@ -1,3 +1,9 @@
+qterminal (0.8.0-2) experimental; urgency=medium
+
+  * Patched appdata and metainfo-path again 
+
+ -- Alf Gaida <agaida@siduction.org>  Sun, 05 Nov 2017 03:00:28 +0100
+
 qterminal (0.8.0-1) experimental; urgency=medium
 
   * Cherry-picking upstream version 0.8.0.
