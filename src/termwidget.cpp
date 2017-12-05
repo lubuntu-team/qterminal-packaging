@@ -20,16 +20,28 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QDesktopServices>
+#include <QMessageBox>
+#include <QAbstractButton>
+#include <QMouseEvent>
+#include <assert.h>
 
+#ifdef HAVE_QDBUS
+    #include <QtDBus/QtDBus>
+    #include "termwidgetholder.h"
+    #include "terminaladaptor.h"
+#endif
+
+
+#include "mainwindow.h"
 #include "termwidget.h"
 #include "config.h"
 #include "properties.h"
-#include "mainwindow.h"
+#include "qterminalapp.h"
 
 static int TermWidgetCount = 0;
 
 
-TermWidgetImpl::TermWidgetImpl(const QString & wdir, const QString & shell, QWidget * parent)
+TermWidgetImpl::TermWidgetImpl(TerminalConfig &cfg, QWidget * parent)
     : QTermWidget(0, parent)
 {
     TermWidgetCount++;
@@ -43,17 +55,12 @@ TermWidgetImpl::TermWidgetImpl(const QString & wdir, const QString & shell, QWid
 
     setHistorySize(5000);
 
-    if (!wdir.isNull())
-        setWorkingDirectory(wdir);
+    setWorkingDirectory(cfg.getWorkingDirectory());
 
-    if (shell.isNull())
+    QString shell = cfg.getShell();
+    if (!shell.isEmpty())
     {
-        if (!Properties::Instance()->shell.isNull())
-            setShellProgram(Properties::Instance()->shell);
-    }
-    else
-    {
-        qDebug() << "Settings custom shell program:" << shell;
+        qDebug() << "Shell program:" << shell;
         QStringList parts = shell.split(QRegExp("\\s+"), QString::SkipEmptyParts);
         qDebug() << parts;
         setShellProgram(parts.at(0));
@@ -109,14 +116,14 @@ void TermWidgetImpl::propertiesChanged()
 
     switch(Properties::Instance()->keyboardCursorShape) {
     case 1:
-        setKeyboardCursorShape(QTermWidget::UnderlineCursor);
+        setKeyboardCursorShape(QTermWidget::KeyboardCursorShape::UnderlineCursor);
         break;
     case 2:
-        setKeyboardCursorShape(QTermWidget::IBeamCursor);
+        setKeyboardCursorShape(QTermWidget::KeyboardCursorShape::IBeamCursor);
         break;
     default:
     case 0:
-        setKeyboardCursorShape(QTermWidget::BlockCursor);
+        setKeyboardCursorShape(QTermWidget::KeyboardCursorShape::BlockCursor);
         break;
     }
 
@@ -125,20 +132,36 @@ void TermWidgetImpl::propertiesChanged()
 
 void TermWidgetImpl::customContextMenuCall(const QPoint & pos)
 {
-    QMenu* contextMenu = new QMenu(this);
+    QMenu menu;
+    QMap<QString, QAction*> actions = findParent<MainWindow>(this)->leaseActions();
 
-    QList<QAction*> actions = filterActions(pos);
-    for (auto& action : actions)
+    QList<QAction*> extraActions = filterActions(pos);
+    for (auto& action : extraActions)
     {
-        contextMenu->addAction(action);
+        menu.addAction(action);
     }
 
-    contextMenu->addSeparator();
+    if (!actions.isEmpty())
+    {
+        menu.addSeparator();
+    }
 
-    const MainWindow *main = qobject_cast<MainWindow*>(window());
-    main->setup_ContextMenu_Actions(contextMenu);
-
-    contextMenu->exec(mapToGlobal(pos));
+    menu.addAction(actions[COPY_SELECTION]);
+    menu.addAction(actions[PASTE_CLIPBOARD]);
+    menu.addAction(actions[PASTE_SELECTION]);
+    menu.addAction(actions[ZOOM_IN]);
+    menu.addAction(actions[ZOOM_OUT]);
+    menu.addAction(actions[ZOOM_RESET]);
+    menu.addSeparator();
+    menu.addAction(actions[CLEAR_TERMINAL]);
+    menu.addAction(actions[SPLIT_HORIZONTAL]);
+    menu.addAction(actions[SPLIT_VERTICAL]);
+    // warning TODO/FIXME: disable the action when there is only one terminal
+    menu.addAction(actions[SUB_COLLAPSE]);
+    menu.addSeparator();
+    menu.addAction(actions[TOGGLE_MENU]);
+    menu.addAction(actions[PREFERENCES]);
+    menu.exec(mapToGlobal(pos));
 }
 
 void TermWidgetImpl::zoomIn()
@@ -171,17 +194,106 @@ void TermWidgetImpl::activateUrl(const QUrl & url, bool fromContextMenu) {
     }
 }
 
-TermWidget::TermWidget(const QString & wdir, const QString & shell, QWidget * parent)
-    : QWidget(parent)
+void TermWidgetImpl::pasteSelection()
 {
+    paste(QClipboard::Selection);
+}
+
+void TermWidgetImpl::pasteClipboard()
+{
+    paste(QClipboard::Clipboard);
+}
+
+void TermWidgetImpl::paste(QClipboard::Mode mode)
+{
+    // Paste Clipboard by simulating keypress events
+    QString text = QApplication::clipboard()->text(mode);
+    if ( ! text.isEmpty() )
+    {
+        text.replace("\r\n", "\n");
+        text.replace('\n', '\r');
+        QString trimmedTrailingNl(text);
+        trimmedTrailingNl.replace(QRegExp("\\r+$"), "");
+        bool isMultiline = trimmedTrailingNl.contains('\r');
+        if (!isMultiline && Properties::Instance()->trimPastedTrailingNewlines)
+        {
+            text = trimmedTrailingNl;
+        }
+        if (Properties::Instance()->confirmMultilinePaste)
+        {
+            if (text.contains('\r') && Properties::Instance()->confirmMultilinePaste)
+            {
+                QMessageBox confirmation(this);
+                confirmation.setWindowTitle(tr("Paste multiline text"));
+                confirmation.setText(tr("Are you sure you want to paste this text?"));
+                confirmation.setDetailedText(text);
+                confirmation.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                // Click "Show details..." to show those by default
+                foreach( QAbstractButton * btn, confirmation.buttons() )
+                {
+                    if (confirmation.buttonRole(btn) == QMessageBox::ActionRole && btn->text() == QMessageBox::tr("Show Details..."))
+                    {
+                        btn->clicked();
+                        break;
+                    }
+                }
+                confirmation.setDefaultButton(QMessageBox::Yes);
+                confirmation.exec();
+                if (confirmation.standardButton(confirmation.clickedButton()) != QMessageBox::Yes)
+                {
+                    return;
+                }
+            }
+        }
+
+        /* TODO: Support bracketedPasteMode
+        if (bracketedPasteMode())
+        {
+            text.prepend("\e[200~");
+            text.append("\e[201~");
+        }*/
+        sendText(text);
+    }
+}
+
+bool TermWidget::eventFilter(QObject * obj, QEvent * ev)
+{
+    if (ev->type() == QEvent::MouseButtonPress)
+    {
+        QMouseEvent *mev = (QMouseEvent *)ev;
+        if ( mev->button() == Qt::MidButton )
+        {
+            impl()->pasteSelection();
+            return true;
+        }
+    }
+    return false;
+}
+
+TermWidget::TermWidget(TerminalConfig &cfg, QWidget * parent)
+    : QWidget(parent),
+      DBusAddressable("/terminals")
+{
+
+    #ifdef HAVE_QDBUS
+    registerAdapter<TerminalAdaptor, TermWidget>(this);
+    #endif
     m_border = palette().color(QPalette::Window);
-    m_term = new TermWidgetImpl(wdir, shell, this);
+    m_term = new TermWidgetImpl(cfg, this);
     setFocusProxy(m_term);
 
     m_layout = new QVBoxLayout;
     setLayout(m_layout);
 
     m_layout->addWidget(m_term);
+    foreach (QObject *o, m_term->children())
+    {
+        // Find TerminalDisplay
+        if (!o->isWidgetType() || qobject_cast<QWidget*>(o)->isHidden())
+            continue;
+        o->installEventFilter(this);
+    }
+
 
     propertiesChanged();
 
@@ -216,10 +328,52 @@ void TermWidget::term_termLostFocus()
 
 void TermWidget::paintEvent (QPaintEvent *)
 {
-    QPainter p(this);
-    QPen pen(m_border);
-    pen.setWidth(30);
-    pen.setBrush(m_border);
-    p.setPen(pen);
-    p.drawRect(0, 0, width()-1, height()-1);
+  if (Properties::Instance()->highlightCurrentTerminal)
+    {
+      QPainter p(this);
+      QPen pen(m_border);
+      pen.setWidth(3);
+      pen.setBrush(m_border);
+      p.setPen(pen);
+      p.drawRect(0, 0, width()-1, height()-1);
+    }
 }
+
+#if HAVE_QDBUS
+
+QDBusObjectPath TermWidget::splitHorizontal(const QHash<QString,QVariant> &termArgs)
+{
+    TermWidgetHolder *holder = findParent<TermWidgetHolder>(this);
+    assert(holder != NULL);
+    TerminalConfig cfg = TerminalConfig::fromDbus(termArgs, this);
+    return holder->split(this, Qt::Horizontal, cfg)->getDbusPath();
+}
+
+QDBusObjectPath TermWidget::splitVertical(const QHash<QString,QVariant> &termArgs)
+{
+    TermWidgetHolder *holder = findParent<TermWidgetHolder>(this);
+    assert(holder != NULL);
+    TerminalConfig cfg = TerminalConfig::fromDbus(termArgs, this);
+    return holder->split(this, Qt::Vertical, cfg)->getDbusPath();
+}
+
+QDBusObjectPath TermWidget::getTab()
+{
+    return findParent<TermWidgetHolder>(this)->getDbusPath();
+}
+
+void TermWidget::closeTerminal()
+{
+    TermWidgetHolder *holder = findParent<TermWidgetHolder>(this);
+    holder->splitCollapse(this);
+}
+
+void TermWidget::sendText(const QString text)
+{
+    if (impl())
+    {
+        impl()->sendText(text);
+    }
+}
+
+#endif

@@ -19,11 +19,20 @@
 #include <QApplication>
 #include <QtGlobal>
 
+#include <assert.h>
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
+#ifdef HAVE_QDBUS
+    #include <QtDBus/QtDBus>
+    #include <unistd.h>
+    #include "processadaptor.h"
+#endif
 
-#include  "mainwindow.h"
+
+#include "mainwindow.h"
+#include "qterminalapp.h"
+#include "terminalconfig.h"
 
 #define out
 
@@ -38,6 +47,8 @@ const struct option long_options[] = {
     {"profile", 1, NULL, 'p'},
     {NULL,      0, NULL,  0}
 };
+
+QTerminalApp * QTerminalApp::m_instance = NULL;
 
 void print_usage_and_exit(int code)
 {
@@ -111,16 +122,35 @@ int main(int argc, char *argv[])
     // Warning: do not change settings format. It can screw bookmarks later.
     QSettings::setDefaultFormat(QSettings::IniFormat);
 
-    QApplication app(argc, argv);
+    QTerminalApp *app = QTerminalApp::Instance(argc, argv);
+    #ifdef HAVE_QDBUS
+        app->registerOnDbus();
+    #endif
+
     QString workdir, shell_command;
     bool dropMode;
     parse_args(argc, argv, workdir, shell_command, dropMode);
 
     if (workdir.isEmpty())
         workdir = QDir::currentPath();
+    app->setWorkingDirectory(workdir);
+
+    const QSettings settings;
+    const QFileInfo customStyle = QFileInfo(
+        QFileInfo(settings.fileName()).canonicalPath() +
+        "/style.qss"
+    );
+    if (customStyle.isFile() && customStyle.isReadable())
+    {
+        QFile style(customStyle.canonicalFilePath());
+        style.open(QFile::ReadOnly);
+        QString styleString = QLatin1String(style.readAll());
+        app->setStyleSheet(styleString);
+    }
 
     // icons
     /* setup our custom icon theme if there is no system theme (OS X, Windows) */
+    QCoreApplication::instance()->setAttribute(Qt::AA_UseHighDpiPixmaps); //Fix for High-DPI systems
     if (QIcon::themeName().isEmpty())
         QIcon::setThemeName("QTerminal");
 
@@ -135,25 +165,151 @@ int main(int argc, char *argv[])
     qDebug() << "APPLE_BUNDLE: Loading translator file" << fname << "from dir" << QApplication::applicationDirPath()+"../translations";
     qDebug() << "load success:" << translator.load(fname, QApplication::applicationDirPath()+"../translations", "_");
 #endif
-    app.installTranslator(&translator);
+    app->installTranslator(&translator);
 
-    MainWindow *window;
+    TerminalConfig initConfig = TerminalConfig(workdir, shell_command);
+    app->newWindow(dropMode, initConfig);
+
+    int ret = app->exec();
+    delete Properties::Instance();
+    app->cleanup();
+
+    return ret;
+}
+
+MainWindow *QTerminalApp::newWindow(bool dropMode, TerminalConfig &cfg)
+{
+    MainWindow *window = NULL;
     if (dropMode)
     {
         QWidget *hiddenPreviewParent = new QWidget(0, Qt::Tool);
-        window = new MainWindow(workdir, shell_command, dropMode, hiddenPreviewParent);
+        window = new MainWindow(cfg, dropMode, hiddenPreviewParent);
         if (Properties::Instance()->dropShowOnStart)
             window->show();
     }
     else
     {
-        window = new MainWindow(workdir, shell_command, dropMode);
+        window = new MainWindow(cfg, dropMode);
         window->show();
     }
-
-    int ret = app.exec();
-    delete Properties::Instance();
-    delete window;
-
-    return ret;
+    return window;
 }
+
+QTerminalApp *QTerminalApp::Instance()
+{
+    assert(m_instance != NULL);
+    return m_instance;
+}
+
+QTerminalApp *QTerminalApp::Instance(int &argc, char **argv)
+{
+    assert(m_instance == NULL);
+    m_instance = new QTerminalApp(argc, argv);
+    return m_instance;
+}
+
+QTerminalApp::QTerminalApp(int &argc, char **argv)
+    :QApplication(argc, argv)
+{
+}
+
+QString &QTerminalApp::getWorkingDirectory()
+{
+    return m_workDir;
+}
+
+void QTerminalApp::setWorkingDirectory(const QString &wd)
+{
+    m_workDir = wd;
+}
+
+void QTerminalApp::cleanup() {
+    delete m_instance;
+    m_instance = NULL;
+}
+
+
+void QTerminalApp::addWindow(MainWindow *window)
+{
+    m_windowList.append(window);
+}
+
+void QTerminalApp::removeWindow(MainWindow *window)
+{
+    m_windowList.removeOne(window);
+}
+
+QList<MainWindow *> QTerminalApp::getWindowList()
+{
+    return m_windowList;
+}
+
+#ifdef HAVE_QDBUS
+void QTerminalApp::registerOnDbus()
+{
+    if (!QDBusConnection::sessionBus().isConnected())
+    {
+        fprintf(stderr, "Cannot connect to the D-Bus session bus.\n"
+                "To start it, run:\n"
+                "\teval `dbus-launch --auto-syntax`\n");
+        return;
+    }
+    QString serviceName = QStringLiteral("org.lxqt.QTerminal-%1").arg(getpid());
+    if (!QDBusConnection::sessionBus().registerService(serviceName))
+    {
+        fprintf(stderr, "%s\n", qPrintable(QDBusConnection::sessionBus().lastError().message()));
+        return;
+    }
+    new ProcessAdaptor(this);
+    QDBusConnection::sessionBus().registerObject("/", this);
+}
+
+QList<QDBusObjectPath> QTerminalApp::getWindows()
+{
+    QList<QDBusObjectPath> windows;
+    foreach (MainWindow *wnd, m_windowList)
+    {
+        windows.push_back(wnd->getDbusPath());
+    }
+    return windows;
+}
+
+QDBusObjectPath QTerminalApp::newWindow(const QHash<QString,QVariant> &termArgs)
+{
+    TerminalConfig cfg = TerminalConfig::fromDbus(termArgs);
+    MainWindow *wnd = newWindow(false, cfg);
+    assert(wnd != NULL);
+    return wnd->getDbusPath();
+}
+
+QDBusObjectPath QTerminalApp::getActiveWindow()
+{
+    QWidget *aw = activeWindow();
+    if (aw == NULL)
+        return QDBusObjectPath("/");
+    return qobject_cast<MainWindow*>(aw)->getDbusPath();
+}
+
+bool QTerminalApp::isDropMode() {
+  if (m_windowList.count() == 0) {
+    return false;
+  }
+  MainWindow *wnd = m_windowList.at(0);
+  return wnd->dropMode();
+}
+
+bool QTerminalApp::toggleDropdown() {
+  if (m_windowList.count() == 0) {
+    return false;
+  }
+  MainWindow *wnd = m_windowList.at(0);
+  if (!wnd->dropMode()) {
+    return false;
+  }
+  wnd->showHide();
+  return true;
+}
+
+
+#endif
+

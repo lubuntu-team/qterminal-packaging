@@ -17,10 +17,12 @@
  ***************************************************************************/
 
 #include <qtermwidget.h>
+#include <assert.h>
 
 #include "properties.h"
 #include "config.h"
-
+#include "mainwindow.h"
+#include "qterminalapp.h"
 
 Properties * Properties::m_instance = 0;
 
@@ -45,7 +47,6 @@ Properties::Properties(const QString& filename)
 Properties::~Properties()
 {
     qDebug("Properties destructor called");
-    saveSettings();
     delete m_settings;
     m_instance = 0;
 }
@@ -69,17 +70,10 @@ void Properties::loadSettings()
 
     highlightCurrentTerminal = m_settings->value("highlightCurrentTerminal", true).toBool();
 
-    font = qvariant_cast<QFont>(m_settings->value("font", defaultFont()));
-
-    m_settings->beginGroup("Shortcuts");
-    QStringList keys = m_settings->childKeys();
-    foreach( QString key, keys )
-    {
-        QKeySequence sequence = QKeySequence( m_settings->value( key ).toString() );
-        if( Properties::Instance()->actions.contains( key ) )
-            Properties::Instance()->actions[ key ]->setShortcut( sequence );
-    }
-    m_settings->endGroup();
+    font = QFont(qvariant_cast<QString>(m_settings->value("fontFamily", defaultFont().family())),
+                 qvariant_cast<int>(m_settings->value("fontSize", defaultFont().pointSize())));
+    //Legacy font setting
+    font = qvariant_cast<QFont>(m_settings->value("font", font));
 
     mainWindowSize = m_settings->value("MainWindow/size").toSize();
     mainWindowPosition = m_settings->value("MainWindow/pos").toPoint();
@@ -127,7 +121,8 @@ void Properties::loadSettings()
     // bookmarks
     useBookmarks = m_settings->value("UseBookmarks", false).toBool();
     bookmarksVisible = m_settings->value("BookmarksVisible", true).toBool();
-    bookmarksFile = m_settings->value("BookmarksFile", QFileInfo(m_settings->fileName()).canonicalPath()+"/qterminal_bookmarks.xml").toString();
+    const QString s = QFileInfo(m_settings->fileName()).canonicalPath() + QString::fromLatin1("/qterminal_bookmarks.xml");
+    bookmarksFile = m_settings->value("BookmarksFile", s).toString();
 
     terminalsPreset = m_settings->value("TerminalsPreset", 0).toInt();
 
@@ -141,6 +136,9 @@ void Properties::loadSettings()
 
     changeWindowTitle = m_settings->value("ChangeWindowTitle", true).toBool();
     changeWindowIcon = m_settings->value("ChangeWindowIcon", true).toBool();
+
+    confirmMultilinePaste = m_settings->value("ConfirmMultilinePaste", false).toBool();
+    trimPastedTrailingNewlines = m_settings->value("TrimPastedTrailingNewlines", false).toBool();
 }
 
 void Properties::saveSettings()
@@ -148,15 +146,21 @@ void Properties::saveSettings()
     m_settings->setValue("guiStyle", guiStyle);
     m_settings->setValue("colorScheme", colorScheme);
     m_settings->setValue("highlightCurrentTerminal", highlightCurrentTerminal);
-    m_settings->setValue("font", font);
+    m_settings->setValue("fontFamily", font.family());
+    m_settings->setValue("fontSize", font.pointSize());
+    //Clobber legacy setting
+    m_settings->remove("font");
 
     m_settings->beginGroup("Shortcuts");
-    QMapIterator< QString, QAction * > it(actions);
+    MainWindow *mainWindow = QTerminalApp::Instance()->getWindowList()[0];
+    assert(mainWindow != NULL);
+
+    QMapIterator< QString, QAction * > it(mainWindow->leaseActions());
     while( it.hasNext() )
     {
         it.next();
         QStringList sequenceStrings;
-        foreach (QKeySequence shortcut, it.value()->shortcuts())
+        foreach (const QKeySequence &shortcut, it.value()->shortcuts())
             sequenceStrings.append(shortcut.toString());
         m_settings->setValue(it.key(), sequenceStrings.join('|'));
     }
@@ -218,6 +222,10 @@ void Properties::saveSettings()
 
     m_settings->setValue("ChangeWindowTitle", changeWindowTitle);
     m_settings->setValue("ChangeWindowIcon", changeWindowIcon);
+
+
+    m_settings->setValue("ConfirmMultilinePaste", confirmMultilinePaste);
+    m_settings->setValue("TrimPastedTrailingNewlines", trimPastedTrailingNewlines);
 }
 
 void Properties::migrate_settings()

@@ -22,22 +22,34 @@
 #include "ui_qterminal.h"
 
 #include <QMainWindow>
+#include <QAction>
+
 #include "qxtglobalshortcut.h"
+#include "terminalconfig.h"
+#include "dbusaddressable.h"
+
 
 class QToolButton;
 
-class MainWindow : public QMainWindow , private Ui::mainWindow
+class MainWindow : public QMainWindow, private Ui::mainWindow, public DBusAddressable
 {
     Q_OBJECT
 
 public:
-    MainWindow(const QString& work_dir, const QString& command,
+    MainWindow(TerminalConfig& cfg,
                bool dropMode,
                QWidget * parent = 0, Qt::WindowFlags f = 0);
     ~MainWindow();
 
-    bool dropMode() const { return m_dropMode; }
-    void setup_ContextMenu_Actions(QMenu* contextMenu) const;
+    bool dropMode() { return m_dropMode; }
+    QMap<QString, QAction*> & leaseActions();
+
+    #ifdef HAVE_QDBUS
+    QDBusObjectPath getActiveTab();
+    QList<QDBusObjectPath> getTabs();
+    QDBusObjectPath newTab(const QHash<QString,QVariant> &termArgs);
+    void closeWindow();
+    #endif
 
 protected:
      bool event(QEvent* event);
@@ -46,16 +58,26 @@ private:
     QActionGroup *tabPosition, *scrollBarPosition, *keyboardCursorShape;
     QMenu *tabPosMenu, *scrollPosMenu, *keyboardCursorShapeMenu;
 
-    QString m_initWorkDir;
-    QString m_initShell;
+    // A parent object for QObjects that are created dynamically based on settings
+    // Used to simplify the setting cleanup on reconfiguration: deleting settingOwner frees all related QObjects
+    QWidget *settingOwner;
+
+    QMenu *presetsMenu;
+
+    TerminalConfig m_config;
 
     QDockWidget *m_bookmarksDock;
 
     void setup_Action(const char *name, QAction *action, const char *defaultShortcut, const QObject *receiver,
                       const char *slot, QMenu *menu = NULL, const QVariant &data = QVariant());
+    QMap< QString, QAction * > actions;
+    
+    void rebuildActions();
+
     void setup_FileMenu_Actions();
     void setup_ActionsMenu_Actions();
     void setup_ViewMenu_Actions();
+    void setup_ContextMenu_Actions();
     void setupCustomDirs();
 
     void closeEvent(QCloseEvent*);
@@ -70,6 +92,10 @@ private:
     bool hasMultipleTabs();
     bool hasMultipleSubterminals();
 
+public slots:
+    void showHide();
+    void updateDisabledActions();
+
 private slots:
     void on_consoleTabulator_currentChanged(int);
     void propertiesChanged();
@@ -77,12 +103,12 @@ private slots:
     void actProperties_triggered();
     void updateActionGroup(QAction *);
 
+    void toggleBookmarks();
     void toggleBorderless();
     void toggleTabBar();
     void toggleMenu();
 
     void showFullscreen(bool fullscreen);
-    void showHide();
     void setKeepOpen(bool value);
     void find();
 
@@ -93,6 +119,5 @@ private slots:
     void addNewTab();
     void onCurrentTitleChanged(int index);
 
-    void aboutToShowActionsMenu();
 };
 #endif //MAINWINDOW_H
