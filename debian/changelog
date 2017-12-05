@@ -1,3 +1,9 @@
+qterminal (0.8.0-3) unstable; urgency=medium
+
+  * Transition to unstable
+
+ -- Alf Gaida <agaida@siduction.org>  Tue, 05 Dec 2017 19:14:51 +0100
+
 qterminal (0.8.0-2) experimental; urgency=medium
 
   * Patched appdata and metainfo-path again 
