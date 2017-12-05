@@ -7,15 +7,16 @@ Section: x11
 Priority: optional
 Build-Depends: debhelper (>= 10),
                libkf5windowsystem-dev,
-               libqtermwidget5-0-dev,
+               libqtermwidget5-0-dev (>= 0.8.0),
                libqt5svg5-dev,
                libqt5x11extras5-dev,
+               libutf8proc-dev,
                libx11-dev,
-               lxqt-build-tools,
+               lxqt-build-tools (>= 0.4.0),
                qtbase5-private-dev
-Standards-Version: 4.1.0
-Vcs-Browser: https://anonscm.debian.org/cgit/pkg-lxqt/qterminal.git/?h=debian/sid
-Vcs-Git: https://anonscm.debian.org/git/pkg-lxqt/qterminal.git -b debian/sid
+Standards-Version: 4.1.1
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-lxqt/qterminal.git/?h=debian/experimental
+Vcs-Git: https://anonscm.debian.org/git/pkg-lxqt/qterminal.git -b debian/experimental
 Homepage: https://github.com/lxde/qterminal
 
 Package: qterminal
