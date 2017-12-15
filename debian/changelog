@@ -1,3 +1,11 @@
+qterminal (0.8.0-4) unstable; urgency=medium
+
+  * Bumped Standards to 4.1.2, no changes needed
+  * Removed branch from VCS fields
+  * Removed debian/gbp.conf 
+
+ -- Alf Gaida <agaida@siduction.org>  Fri, 15 Dec 2017 17:56:14 +0100
+
 qterminal (0.8.0-3) unstable; urgency=medium
 
   * Transition to unstable
