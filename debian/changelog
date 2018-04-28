@@ -1,8 +1,20 @@
+qterminal (0.8.0-5) unstable; urgency=medium
+
+  * Bumped compat to 11
+  * Bumped debhelper to >= 11~
+  * Bumped Standards to 4.1.4, no changes needed
+  * Changed VCS fields for salsa
+  * Changed Homepage, Source and watch to lxqt
+  * Bumped years in copyright
+  * Removed trailing whitespaces in changelog
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 28 Apr 2018 19:20:40 +0200
+
 qterminal (0.8.0-4) unstable; urgency=medium
 
   * Bumped Standards to 4.1.2, no changes needed
   * Removed branch from VCS fields
-  * Removed debian/gbp.conf 
+  * Removed debian/gbp.conf
 
  -- Alf Gaida <agaida@siduction.org>  Fri, 15 Dec 2017 17:56:14 +0100
 
@@ -14,7 +26,7 @@ qterminal (0.8.0-3) unstable; urgency=medium
 
 qterminal (0.8.0-2) experimental; urgency=medium
 
-  * Patched appdata and metainfo-path again 
+  * Patched appdata and metainfo-path again
 
  -- Alf Gaida <agaida@siduction.org>  Sun, 05 Nov 2017 03:00:28 +0100
 
@@ -23,7 +35,7 @@ qterminal (0.8.0-1) experimental; urgency=medium
   * Cherry-picking upstream version 0.8.0.
   * Switched to experimental
   * Bumped Standards to 4.1.1
-  * Bumped libqtermwidget5-0-dev to >= 0.8.0 
+  * Bumped libqtermwidget5-0-dev to >= 0.8.0
   * Added dependency libutf8proc-dev
   * Bumped lxqt-build-tools to >= 0.4.0
   * Fixed copyright
@@ -35,7 +47,7 @@ qterminal (0.7.1-3) unstable; urgency=medium
 
   * Bumped Standards to 4.1.0 - no changes needed
   * Fixed d/control with cme
-  * Close slowness bug, not reproducible anymore (Closes: #853220) 
+  * Close slowness bug, not reproducible anymore (Closes: #853220)
 
  -- Alf Gaida <agaida@siduction.org>  Wed, 06 Sep 2017 17:55:33 +0200
 
@@ -77,7 +89,7 @@ qterminal (0.7.0-2) unstable; urgency=medium
   * Added Recommends qterminal-l10n
   * Fixed VCS fields, using https, plain /git/ and pointing to the right branch
   * Fixed copyright Format field, using https
-  * Exported LC_ALL=C.UTF-8, make builds reproducible 
+  * Exported LC_ALL=C.UTF-8, make builds reproducible
   * Added hardening options
   * Added translation control to rules
   * Set CMAKE_BUILD_TYPE=RelWithDebInfo
@@ -102,7 +114,7 @@ qterminal (0.6.0+20160104-1) unstable; urgency=medium
 
   [ Alf Gaida ]
   * Cherry-picking upstream version 0.6.0+20160104.
-  * Fixed copyright for 2016, added Peter Mattern 
+  * Fixed copyright for 2016, added Peter Mattern
   * Fixed 'possible-unindented-list-in-extended-description'
 
   [ Peter Mattern ]

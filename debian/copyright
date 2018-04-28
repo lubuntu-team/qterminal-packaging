@@ -1,10 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: qterminal
-Source: https://github.com/lxde/qterminal.git
+Source: https://github.com/lxqt/qterminal.git
 
 Files: *
-Copyright: 2010-2016 Petr Vanek <petr@scribus.info>
-           2016-2017 LXQt Team
+Copyright: 2016-2018 LXQt Team
+           2010-2016 Petr Vanek <petr@scribus.info>
 License: GPL-2+
 
 Files: src/config.h
@@ -19,10 +19,10 @@ Copyright: 2006-2011 the LibQxt project.
 License: BSD-3-clause
 
 Files: debian/*
-Copyright: 2012-2017 Alf Gaida <agaida@siduction.org>
-           2012      Torsten Wohlfarth <towo@siduction.org>
-           2015      ChangZhuo Chen (陳昌倬) <czchen@debian.org>
+Copyright: 2012-2018 Alf Gaida <agaida@siduction.org>
            2016      Peter Mattern <pmattern@arcor.de>
+           2015      ChangZhuo Chen (陳昌倬) <czchen@debian.org>
+           2012      Torsten Wohlfarth <towo@siduction.org>
 License: GPL-2+
 
 License: GPL-2+
