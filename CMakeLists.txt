@@ -5,8 +5,9 @@ project(qterminal)
 include(GNUInstallDirs)
 
 # qterminal version
-set(STR_VERSION "0.8.0")
-set(LXQTBT_MINIMUM_VERSION "0.4.0")
+set(STR_VERSION "0.9.0")
+set(LXQTBT_MINIMUM_VERSION "0.5.0")
+set(QTERMWIDGET_MINIMUM_VERSION "0.9.0")
 
 option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files" OFF)
 
@@ -23,8 +24,10 @@ elseif(UNIX)
     find_package(Qt5X11Extras REQUIRED)
     find_package(Qt5DBus)
 endif()
-find_package(QTermWidget5 REQUIRED)
+find_package(QTermWidget5 ${QTERMWIDGET_MINIMUM_VERSION} REQUIRED)
 find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
+
+include(LXQtPreventInSourceBuilds)
 include(LXQtTranslateTs)
 include(LXQtCompilerSettings NO_POLICY_SCOPE)
 message(STATUS "Qt version: ${Qt5Core_VERSION}")
@@ -42,13 +45,17 @@ elseif(UNIX)
    message(STATUS "X11_X11_LIB: ${X11_X11_LIB}")
 endif()
 
-add_definitions(-DSTR_VERSION=\"${STR_VERSION}\")
+add_definitions(
+    -DSTR_VERSION=\"${STR_VERSION}\"
+    -DQT_NO_FOREACH
+)
 
 set(EXE_NAME qterminal)
 
 set(QTERM_SRC
     src/main.cpp
     src/mainwindow.cpp
+    src/tabbar.cpp
     src/tabwidget.cpp
     src/termwidget.cpp
     src/termwidgetholder.cpp
@@ -63,6 +70,7 @@ set(QTERM_SRC
 set(QTERM_MOC_SRC
     src/qterminalapp.h
     src/mainwindow.h
+    src/tabbar.h
     src/tabwidget.h
     src/termwidget.h
     src/termwidgetholder.h

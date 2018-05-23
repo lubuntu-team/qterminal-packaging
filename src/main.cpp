@@ -60,8 +60,8 @@ void print_usage_and_exit(int code)
     puts("  -p,  --profile            Load qterminal with specific options");
     puts("  -v,  --version            Prints application version and exits");
     puts("  -w,  --workdir <dir>      Start session with specified work directory");
-    puts("\nHomepage: <https://github.com/lxde/qterminal>");
-    puts("Report bugs to <https://github.com/lxde/qterminal/issues>");
+    puts("\nHomepage: <https://github.com/lxqt/qterminal>");
+    puts("Report bugs to <https://github.com/lxqt/qterminal/issues>");
     exit(code);
 }
 
@@ -111,8 +111,6 @@ void parse_args(int argc, char* argv[], QString& workdir, QString & shell_comman
 
 int main(int argc, char *argv[])
 {
-    setenv("TERM", "xterm", 1); // TODO/FIXME: why?
-
     QApplication::setApplicationName("qterminal");
     QApplication::setApplicationVersion(STR_VERSION);
     QApplication::setOrganizationDomain("qterminal.org");
@@ -130,6 +128,11 @@ int main(int argc, char *argv[])
     QString workdir, shell_command;
     bool dropMode;
     parse_args(argc, argv, workdir, shell_command, dropMode);
+
+    Properties::Instance()->migrate_settings();
+    Properties::Instance()->loadSettings();
+
+    qputenv("TERM", Properties::Instance()->term.toLatin1());
 
     if (workdir.isEmpty())
         workdir = QDir::currentPath();
@@ -267,7 +270,7 @@ void QTerminalApp::registerOnDbus()
 QList<QDBusObjectPath> QTerminalApp::getWindows()
 {
     QList<QDBusObjectPath> windows;
-    foreach (MainWindow *wnd, m_windowList)
+    for (MainWindow *wnd : qAsConst(m_windowList))
     {
         windows.push_back(wnd->getDbusPath());
     }

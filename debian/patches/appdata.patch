@@ -1,12 +1,10 @@
-Description: Fixed appdata and path
-   * should be pushed to upstream soon
-
+Description: <short summary of the patch>
 Author: Alf Gaida <agaida@siduction.org>
-Last-Update: 2017-11-05
+Last-Update: 2018-05-23
 
---- qterminal-0.8.0.orig/CMakeLists.txt
-+++ qterminal-0.8.0/CMakeLists.txt
-@@ -205,7 +205,7 @@ install(FILES
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -213,7 +213,7 @@
  
  install(FILES
      qterminal.appdata.xml
@@ -15,8 +13,8 @@ Last-Update: 2017-11-05
  )
  
  if(NOT APPLEBUNDLE)
---- qterminal-0.8.0.orig/qterminal.appdata.xml
-+++ qterminal-0.8.0/qterminal.appdata.xml
+--- a/qterminal.appdata.xml
++++ b/qterminal.appdata.xml
 @@ -1,6 +1,6 @@
  <?xml version="1.0" encoding="UTF-8"?>
 -<application>
@@ -30,10 +28,11 @@ Last-Update: 2017-11-05
        <caption>Find bar and highlighted match.</caption>
      </screenshot>
    </screenshots>
+-  <url type="homepage">https://github.com/lxqt/qterminal</url>
+-</application>
 +
 +  <developer_name>LXQt Team</developer_name>
-   <url type="homepage">https://github.com/lxde/qterminal</url>
--</application>
++  <url type="homepage">https://github.com/lxde/qterminal</url>
 +  <url type="bugtracker">https://github.com/qterminal/issues</url>
 +  <url type="help">https://github.com/lxde/lxqt/wiki</url>
 +  <url type="translate">http://github.com/lxde/lxqt-l10n</url>
