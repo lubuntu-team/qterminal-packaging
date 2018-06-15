@@ -25,7 +25,7 @@ Depends: ${shlibs:Depends},
 Recommends: qterminal-l10n
 Provides: x-terminal-emulator
 Description: Lightweight Qt terminal emulator
- QTerminal is a lightwight terminal emulator based on QTermWidget.
+ QTerminal is a lightweight terminal emulator based on QTermWidget.
  .
  Among other it features
    * Split terminals (horizontally and vertically).

@@ -1,3 +1,11 @@
+qterminal (0.9.0-3) unstable; urgency=medium
+
+  * Fixed typo in long description
+    Nice catch, thanks annadane <fjfj109@protonmail.com>
+    (Closes: #901565)
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 16 Jun 2018 00:50:09 +0200
+
 qterminal (0.9.0-1) unstable; urgency=medium
 
   * Cherry-picking upstream version 0.9.0.
