@@ -1,3 +1,9 @@
+qterminal (0.9.0-3ubuntu1) UNRELEASED; urgency=medium
+
+  * Update the maintainer and Vcs-* for maintaining in Lubuntu.
+
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Tue, 10 Jul 2018 21:32:29 -0500
+
 qterminal (0.9.0-3) unstable; urgency=medium
 
   * Fixed typo in long description
