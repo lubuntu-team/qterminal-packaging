@@ -1,10 +1,10 @@
-qterminal (0.9.0-3ubuntu1) UNRELEASED; urgency=medium
+qterminal (0.9.0-3ubuntu1) cosmic; urgency=medium
 
   * Update the maintainer and Vcs-* for maintaining in Lubuntu.
   * Add patch adapting to API changes in qtermwidget, and bump the
     dependencies accordingly.
 
- -- Simon Quigley <tsimonq2@ubuntu.com>  Tue, 10 Jul 2018 21:32:29 -0500
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Tue, 10 Jul 2018 22:34:17 -0500
 
 qterminal (0.9.0-3) unstable; urgency=medium
 
