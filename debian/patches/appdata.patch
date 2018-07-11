@@ -1,10 +1,10 @@
-Description: <short summary of the patch>
+Description: Add some appdata
 Author: Alf Gaida <agaida@siduction.org>
-Last-Update: 2018-05-23
+Last-Update: 2018-07-10
 
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -213,7 +213,7 @@
+@@ -213,7 +213,7 @@ install(FILES
  
  install(FILES
      qterminal.appdata.xml
