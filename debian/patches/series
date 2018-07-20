@@ -1,2 +1,3 @@
 appdata.patch
 fix-memory-api.patch
+remember-window-maximization-state.patch
