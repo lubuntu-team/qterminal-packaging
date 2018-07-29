@@ -1,3 +1,4 @@
 appdata.patch
 fix-memory-api.patch
 remember-window-maximization-state.patch
+fix-too-large-settings-dialog.patch

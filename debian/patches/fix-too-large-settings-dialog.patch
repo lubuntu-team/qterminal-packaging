@@ -1,0 +1,18 @@
+Description: Smaller settings dialog
+Author: Tsu Jan <tsujan2000@gmail.com>
+Origin: upstream
+Bug: https://github.com/lxqt/qterminal/issues/412
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1784198
+Applied-Upstream: commit:9f82b04
+Last-Update: 2018-07-29
+--- a/src/propertiesdialog.cpp
++++ b/src/propertiesdialog.cpp
+@@ -180,6 +180,8 @@ PropertiesDialog::PropertiesDialog(QWidg
+ 
+     trimPastedTrailingNewlinesCheckBox->setChecked(Properties::Instance()->trimPastedTrailingNewlines);
+     confirmMultilinePasteCheckBox->setChecked(Properties::Instance()->confirmMultilinePaste);
++
++    resize(sizeHint()); // show it compact but not too much
+ }
+ 
+ 
