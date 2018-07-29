@@ -1,8 +1,8 @@
-qterminal (0.9.0-3ubuntu3) UNRELEASED; urgency=medium
+qterminal (0.9.0-3ubuntu3) cosmic; urgency=medium
 
   * The preferences menu should never be larger than the screen (LP: #1784198).
 
- -- Simon Quigley <tsimonq2@ubuntu.com>  Sun, 29 Jul 2018 15:03:10 -0500
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Sun, 29 Jul 2018 15:04:10 -0500
 
 qterminal (0.9.0-3ubuntu2) cosmic; urgency=medium
 
