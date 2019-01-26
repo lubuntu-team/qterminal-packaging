@@ -1,5 +1,5 @@
 usr/share/applications/qterminal_drop.desktop
 usr/share/applications/qterminal.desktop
-usr/share/appdata/qterminal.appdata.xml
+usr/share/metainfo/qterminal.appdata.xml
 usr/share/icons/hicolor/64x64/apps/qterminal.png
 usr/bin/qterminal
