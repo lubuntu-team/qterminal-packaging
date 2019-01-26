@@ -33,3 +33,14 @@ Description: Lightweight Qt terminal emulator
    * Multiple tabs.
    * Customizable shortcuts.
    * Various color schemes.
+
+Package: qterminal-l10n
+Architecture: all
+Multi-Arch: foreign
+Section: localization
+Depends: ${misc:Depends},
+         qttranslations5-l10n
+Breaks: qterminal (<< 0.6.1)
+Replaces: qterminal (<< 0.6.1)
+Description: Language package for qterminal
+ This package contains the l10n files needed by qterminal.
