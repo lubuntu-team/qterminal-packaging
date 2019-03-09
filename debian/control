@@ -6,12 +6,12 @@ Section: x11
 Priority: optional
 Build-Depends: debhelper (>= 12),
                libkf5windowsystem-dev,
-               libqtermwidget5-0-dev (>= 0.14.0),
                libqt5svg5-dev,
                libqt5x11extras5-dev,
+               libqtermwidget5-0-dev (>= 0.14.0),
                libutf8proc-dev,
                libx11-dev,
-               lxqt-build-tools (>= 0.6.0),
+               lxqt-build-tools (>= 0.6.0)
 Standards-Version: 4.3.0
 Vcs-Browser: https://phab.lubuntu.me/source/qterminal/
 Vcs-Git: https://phab.lubuntu.me/source/qterminal.git
@@ -21,8 +21,7 @@ Homepage: https://github.com/lxqt/qterminal
 
 Package: qterminal
 Architecture: any
-Depends: ${shlibs:Depends},
-         ${misc:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: qterminal-l10n
 Provides: x-terminal-emulator
 Description: Lightweight Qt terminal emulator
@@ -38,8 +37,7 @@ Package: qterminal-l10n
 Architecture: all
 Multi-Arch: foreign
 Section: localization
-Depends: ${misc:Depends},
-         qttranslations5-l10n
+Depends: qttranslations5-l10n, ${misc:Depends}
 Breaks: qterminal (<< 0.6.1)
 Replaces: qterminal (<< 0.6.1)
 Description: Language package for qterminal
