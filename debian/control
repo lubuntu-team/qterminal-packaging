@@ -8,10 +8,10 @@ Build-Depends: debhelper (>= 12),
                libkf5windowsystem-dev,
                libqt5svg5-dev,
                libqt5x11extras5-dev,
-               libqtermwidget5-0-dev (>= 0.14.0),
+               libqtermwidget5-0-dev (>= 0.15.0),
                libutf8proc-dev,
                libx11-dev,
-               lxqt-build-tools (>= 0.6.0)
+               lxqt-build-tools (>= 0.7.0)
 Standards-Version: 4.3.0
 Vcs-Browser: https://phab.lubuntu.me/source/qterminal/
 Vcs-Git: https://phab.lubuntu.me/source/qterminal.git
