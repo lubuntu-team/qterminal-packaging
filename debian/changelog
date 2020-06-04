@@ -5,6 +5,7 @@ qterminal (0.15.0-0ubuntu1) UNRELEASED; urgency=medium
     - Update LXQt build dependencies.
   * Update Standards-version to 4.5.0, no changes needed.
   * Migrate to debhelper-compat.
+  * Update copyright.
 
  -- Simon Quigley <tsimonq2@ubuntu.com>  Fri, 01 May 2020 00:28:19 -0500
 

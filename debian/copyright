@@ -3,9 +3,13 @@ Upstream-Name: qterminal
 Source: https://github.com/lxqt/qterminal.git
 
 Files: *
-Copyright: 2016-2018 LXQt Team
+Copyright: 2016-2020 LXQt Team
            2010-2016 Petr Vanek <petr@scribus.info>
 License: GPL-2+
+
+Files: qterminal.appdata.xml
+Copyright: 2016-2020 LXQt Team
+License: CC0-1.0
 
 Files: src/config.h
        src/main.cpp
@@ -69,3 +73,7 @@ License: BSD-3-clause
  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  SUCH DAMAGE.
+
+License: CC0-1.0
+ On Debian systems the full text of the CC0-1.0 license can be found in
+ /usr/share/common-licenses/CC0-1.0
