@@ -1,4 +1,4 @@
-qterminal (0.15.0-0ubuntu1) UNRELEASED; urgency=medium
+qterminal (0.15.0-0ubuntu1) groovy; urgency=medium
 
   * New upstream release.
     - Update upstream signing key.
@@ -7,7 +7,7 @@ qterminal (0.15.0-0ubuntu1) UNRELEASED; urgency=medium
   * Migrate to debhelper-compat.
   * Update copyright.
 
- -- Simon Quigley <tsimonq2@ubuntu.com>  Fri, 01 May 2020 00:28:19 -0500
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 04 Jun 2020 14:24:55 -0500
 
 qterminal (0.14.1-0ubuntu1) disco; urgency=medium
 
