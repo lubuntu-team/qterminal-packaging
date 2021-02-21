@@ -1,3 +1,37 @@
+qterminal (0.16.1-1ubuntu1) hirsute; urgency=low
+
+  [ Raman Sarda ]
+  * New upstream version. Merge from debian unstable.
+  * Tighten debhelper-compat requirement.
+  * Updated copyrights.
+  * Updated upstream signing key.
+  * Added upstream metadata.
+  * Updated upstream patch.
+
+ -- Raman Sarda <theloudspeaker@disroot.org>  Mon, 22 Feb 2021 01:50:32 +0530
+
+qterminal (0.16.1-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Sophie Brun ]
+  * Update debian/upstream/signing-key.asc
+  * New upstream version 0.16.1. Closes: #959963
+  * Refresh patch
+  * Update minimal required versions of libqtermwidget5-0-dev and
+    lxqt-build-tools
+  * Bump Standard-Version to 4.5.0
+
+  [ Raphaël Hertzog ]
+  * Refer to common license file for CC0-1.0.
+  * Fix field name typo in debian/upstream/metadata (Repository-Browser =>
+    Repository-Browse).
+  * Set upstream metadata fields: Repository.
+  * Remove obsolete field Name from debian/upstream/metadata (already present in
+    machine-readable debian/copyright).
+
+ -- Sophie Brun <sophie@offensive-security.com>  Wed, 16 Dec 2020 15:06:50 +0100
+
 qterminal (0.15.0-0ubuntu1) groovy; urgency=medium
 
   * New upstream release.
@@ -9,6 +43,13 @@ qterminal (0.15.0-0ubuntu1) groovy; urgency=medium
 
  -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 04 Jun 2020 14:24:55 -0500
 
+qterminal (0.14.1-1) unstable; urgency=medium
+
+  * Cherry-picking upstream version 0.14.1.
+  * Bumped minimum versions libqtermwidget5-0-dev (>= 0.14.1~)
+
+ -- Alf Gaida <agaida@siduction.org>  Tue, 26 Feb 2019 03:09:41 +0100
+
 qterminal (0.14.1-0ubuntu1) disco; urgency=medium
 
   * New upstream release.
@@ -16,6 +57,21 @@ qterminal (0.14.1-0ubuntu1) disco; urgency=medium
   * Drop fix-memory-api.patch, which causes crashes.
 
  -- Simon Quigley <tsimonq2@ubuntu.com>  Sat, 09 Mar 2019 15:56:11 -0600
+
+qterminal (0.14.0-1) unstable; urgency=medium
+
+  * Cherry-picking upstream version 0.14.0.
+  * Bumped Standards to 4.3.0, no changes needed
+  * Dropped d/compat, use debhelper-compat = 12, no changes needed
+  * Fixed years in d/copyright
+  * Added CC0 for qterminal.appdata.xml
+  * Bumped minimum versions libqtermwidget5-0-dev (>= 0.14.0~)
+  * Bumped minimum version lxqt-build-tools (>= 0.6.0~)
+  * Removed obsolete PULL_TRANSLATIONS= OFF from dh_auto_configure
+  * Added l10n-package, moved from lxqt-l10n
+  * Added d/upstream/metadata
+
+ -- Alf Gaida <agaida@siduction.org>  Sun, 27 Jan 2019 22:06:09 +0100
 
 qterminal (0.14.0-0ubuntu1) disco; urgency=medium
 
@@ -232,3 +288,4 @@ qterminal (0.6.0+20150802-1) unstable; urgency=medium
     - Update rules, add linker flags
 
  -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Sat, 19 Sep 2015 10:14:08 +0800
+
