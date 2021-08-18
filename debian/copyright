@@ -3,30 +3,32 @@ Upstream-Name: qterminal
 Source: https://github.com/lxqt/qterminal.git
 
 Files: *
-Copyright: 2016-2020 LXQt Team
-           2010-2016 Petr Vanek <petr@scribus.info>
+Copyright: 2016-2020, LXQt Team
+           2010-2016, Petr Vanek <petr@scribus.info>
+           2017,      Nathan Osman <nathan@quickmediasolutions.com>
 License: GPL-2+
 
 Files: qterminal.appdata.xml
-Copyright: 2016-2020 LXQt Team
+Copyright: 2016-2020, LXQt Team
 License: CC0-1.0
 
 Files: src/config.h
        src/main.cpp
        src/mainwindow.*
        src/tabwidget.*
-Copyright: 2006 Vladimir Kuznetsov <vovanec@gmail.com>
+Copyright: 2006, Vladimir Kuznetsov <vovanec@gmail.com>
 License: GPL-2+
 
 Files: src/third-party/*
-Copyright: 2006-2011 the LibQxt project.
+Copyright: 2006-2011, the LibQxt project.
 License: BSD-3-clause
 
 Files: debian/*
-Copyright: 2012-2018 Alf Gaida <agaida@siduction.org>
-           2016      Peter Mattern <pmattern@arcor.de>
-           2015      ChangZhuo Chen (陳昌倬) <czchen@debian.org>
-           2012      Torsten Wohlfarth <towo@siduction.org>
+Copyright: 2021,      Lubuntu Developers <lubuntu-devel@lists.ubuntu.com>
+           2012-2018, Alf Gaida <agaida@siduction.org>
+           2016,      Peter Mattern <pmattern@arcor.de>
+           2015,      ChangZhuo Chen (陳昌倬) <czchen@debian.org>
+           2012,      Torsten Wohlfarth <towo@siduction.org>
 License: GPL-2+
 
 License: GPL-2+
