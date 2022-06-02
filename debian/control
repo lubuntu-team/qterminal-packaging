@@ -38,8 +38,6 @@ Architecture: all
 Multi-Arch: foreign
 Section: localization
 Depends: qttranslations5-l10n, ${misc:Depends}
-Breaks: qterminal (<< 0.6.1)
-Replaces: qterminal (<< 0.6.1)
 Description: Language package for qterminal
  The l10n files for qterminal.
  .
