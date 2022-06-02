@@ -1,4 +1,4 @@
-qterminal (1.1.0-0ubuntu1) UNRELEASED; urgency=medium
+qterminal (1.1.0-0ubuntu1) kinetic; urgency=medium
 
   * New upstream release.
   * Bump build dependencies.
@@ -6,7 +6,7 @@ qterminal (1.1.0-0ubuntu1) UNRELEASED; urgency=medium
   * Remove reverse-applicable patches.
   * Update install files for new metadata locations.
 
- -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 02 Jun 2022 09:41:38 -0500
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 02 Jun 2022 10:29:23 -0500
 
 qterminal (0.17.0-0ubuntu1) impish; urgency=medium
 
