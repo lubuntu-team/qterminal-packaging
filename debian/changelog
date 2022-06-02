@@ -4,6 +4,7 @@ qterminal (1.1.0-0ubuntu1) UNRELEASED; urgency=medium
   * Bump build dependencies.
   * Drop old Breaks/Replaces, since we're past the LTS.
   * Remove reverse-applicable patches.
+  * Update install files for new metadata locations.
 
  -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 02 Jun 2022 09:41:38 -0500
 
