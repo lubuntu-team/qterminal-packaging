@@ -6,12 +6,12 @@ Section: x11
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
                libkf5windowsystem-dev,
-               libqtermwidget5-0-dev (>= 0.17.0),
+               libqtermwidget5-1-dev (>= 1.1.0),
                libqt5svg5-dev,
                libqt5x11extras5-dev,
                libutf8proc-dev,
                libx11-dev,
-               lxqt-build-tools (>= 0.9.0)
+               lxqt-build-tools (>= 0.11.0)
 Standards-Version: 4.5.1
 Vcs-Browser: https://phab.lubuntu.me/source/qterminal/
 Vcs-Git: https://phab.lubuntu.me/source/qterminal.git
