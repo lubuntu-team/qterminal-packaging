@@ -18,6 +18,7 @@ Vcs-Git: https://phab.lubuntu.me/source/qterminal.git
 XS-Debian-Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
 XS-Debian-Vcs-Git: https://salsa.debian.org/lxqt-team/qterminal.git
 Homepage: https://github.com/lxqt/qterminal
+Rules-Requires-Root: no
 
 Package: qterminal
 Architecture: any

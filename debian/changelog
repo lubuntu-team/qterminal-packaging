@@ -4,6 +4,7 @@ qterminal (1.1.0-0ubuntu1~ppa1) jammy; urgency=medium
   * Updated copyright file.
   * Bumped Standards-Version to 4.6.1, no changes necessary.
   * Removed obsolete "-Wl,--as-needed" linker flag.
+  * Added "Rules-Requires-Root: no" to debian/control.
 
  -- Aaron Rainbolt <arraybolt3@gmail.com>  Tue, 05 Jul 2022 15:39:12 -0500
 
