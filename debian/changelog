@@ -1,3 +1,9 @@
+qterminal (1.1.0-0ubuntu1~ppa1) jammy; urgency=medium
+
+  * Backport to Jammy.
+
+ -- Aaron Rainbolt <arraybolt3@gmail.com>  Tue, 05 Jul 2022 15:39:12 -0500
+
 qterminal (1.1.0-0ubuntu1) kinetic; urgency=medium
 
   * New upstream release.
