@@ -5,6 +5,7 @@ qterminal (1.1.0-0ubuntu1~ppa1) jammy; urgency=medium
   * Bumped Standards-Version to 4.6.1, no changes necessary.
   * Removed obsolete "-Wl,--as-needed" linker flag.
   * Added "Rules-Requires-Root: no" to debian/control.
+  * Removed trailing whitespace from changelog.
 
  -- Aaron Rainbolt <arraybolt3@gmail.com>  Tue, 05 Jul 2022 15:39:12 -0500
 
@@ -325,4 +326,3 @@ qterminal (0.6.0+20150802-1) unstable; urgency=medium
     - Update rules, add linker flags
 
  -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Sat, 19 Sep 2015 10:14:08 +0800
-
