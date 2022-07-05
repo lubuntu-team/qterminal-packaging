@@ -1,0 +1,3 @@
+# Don't need keywords entries here.
+qterminal: desktop-entry-lacks-keywords-entry usr/share/applications/qterminal-drop.desktop
+qterminal: desktop-entry-lacks-keywords-entry usr/share/applications/qterminal.desktop
