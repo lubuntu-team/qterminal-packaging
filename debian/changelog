@@ -1,41 +1,14 @@
-qterminal (1.1.0-0ubuntu1) kinetic; urgency=medium
+qterminal (1.1.0-1) experimental; urgency=medium
 
   * New upstream release.
+  * Run wrap-and-sort.
   * Bump build dependencies.
-  * Drop old Breaks/Replaces, since we're past the LTS.
-  * Remove reverse-applicable patches.
-  * Update install files for new metadata locations.
+  * Bump Standards-version to 4.6.1, no changes needed.
+  * Bump debhelper compat to 13, no changes needed.
+  * Drop some old Breaks/Replaces.
+  * Upstream some useful changes from Ubuntu so we can sync.
 
- -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 02 Jun 2022 10:29:23 -0500
-
-qterminal (0.17.0-0ubuntu1) impish; urgency=medium
-
-  * New upstream release 0.17.0
-  * Update debian/control
-    - Bump Standards-Version to 4.5.1
-    - Use lxqt-build-tools 0.9.0
-    - Use libqtermwidget5-0-dev 0.17.0
-    - Extend qterminal-l10n package description
-  * Update debian/qterminal.install
-  * Update debian/patches/appdata.patch
-    - Refresh patch
-    - Add Forwarded: not needed
-    - Add Lubuntu Developers as author
-  * Update debian/copyright
-
- -- apt-ghetto <apt-ghetto@protonmail.com>  Tue, 17 Aug 2021 10:57:16 +0200
-
-qterminal (0.16.1-1ubuntu1) hirsute; urgency=low
-
-  [ Raman Sarda ]
-  * New upstream version. Merge from debian unstable.
-  * Tighten debhelper-compat requirement.
-  * Updated copyrights.
-  * Updated upstream signing key.
-  * Added upstream metadata.
-  * Updated upstream patch.
-
- -- Raman Sarda <theloudspeaker@disroot.org>  Mon, 22 Feb 2021 01:50:32 +0530
+ -- Simon Quigley <tsimonq2@debian.org>  Thu, 14 Jul 2022 14:26:41 -0500
 
 qterminal (0.16.1-1) unstable; urgency=medium
 
@@ -59,31 +32,12 @@ qterminal (0.16.1-1) unstable; urgency=medium
 
  -- Sophie Brun <sophie@offensive-security.com>  Wed, 16 Dec 2020 15:06:50 +0100
 
-qterminal (0.15.0-0ubuntu1) groovy; urgency=medium
-
-  * New upstream release.
-    - Update upstream signing key.
-    - Update LXQt build dependencies.
-  * Update Standards-version to 4.5.0, no changes needed.
-  * Migrate to debhelper-compat.
-  * Update copyright.
-
- -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 04 Jun 2020 14:24:55 -0500
-
 qterminal (0.14.1-1) unstable; urgency=medium
 
   * Cherry-picking upstream version 0.14.1.
   * Bumped minimum versions libqtermwidget5-0-dev (>= 0.14.1~)
 
  -- Alf Gaida <agaida@siduction.org>  Tue, 26 Feb 2019 03:09:41 +0100
-
-qterminal (0.14.1-0ubuntu1) disco; urgency=medium
-
-  * New upstream release.
-  * Run wrap-and-sort.
-  * Drop fix-memory-api.patch, which causes crashes.
-
- -- Simon Quigley <tsimonq2@ubuntu.com>  Sat, 09 Mar 2019 15:56:11 -0600
 
 qterminal (0.14.0-1) unstable; urgency=medium
 
@@ -99,37 +53,6 @@ qterminal (0.14.0-1) unstable; urgency=medium
   * Added d/upstream/metadata
 
  -- Alf Gaida <agaida@siduction.org>  Sun, 27 Jan 2019 22:06:09 +0100
-
-qterminal (0.14.0-0ubuntu1) disco; urgency=medium
-
-  * New upstream release.
-    - Bump build dependencies.
-    - Remove reverse-applicable patches.
-  * Bump Standards-version to 4.3.0, no changes needed.
-  * Bump debhelper compat to 12, no changes needed.
-  * Add new qterminal-l10n package.
-
- -- Simon Quigley <tsimonq2@ubuntu.com>  Sat, 26 Jan 2019 01:12:04 -0600
-
-qterminal (0.9.0-3ubuntu3) cosmic; urgency=medium
-
-  * The preferences menu should never be larger than the screen (LP: #1784198).
-
- -- Simon Quigley <tsimonq2@ubuntu.com>  Sun, 29 Jul 2018 15:04:10 -0500
-
-qterminal (0.9.0-3ubuntu2) cosmic; urgency=medium
-
-  * Remember the maximization state of the window (LP: #1754496).
-
- -- Simon Quigley <tsimonq2@ubuntu.com>  Fri, 20 Jul 2018 05:25:18 -0500
-
-qterminal (0.9.0-3ubuntu1) cosmic; urgency=medium
-
-  * Update the maintainer and Vcs-* for maintaining in Lubuntu.
-  * Add patch adapting to API changes in qtermwidget, and bump the
-    dependencies accordingly.
-
- -- Simon Quigley <tsimonq2@ubuntu.com>  Tue, 10 Jul 2018 22:34:17 -0500
 
 qterminal (0.9.0-3) unstable; urgency=medium
 
@@ -315,4 +238,3 @@ qterminal (0.6.0+20150802-1) unstable; urgency=medium
     - Update rules, add linker flags
 
  -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Sat, 19 Sep 2015 10:14:08 +0800
-

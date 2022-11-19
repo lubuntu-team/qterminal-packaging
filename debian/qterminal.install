@@ -1,6 +1,6 @@
 usr/bin/qterminal
-usr/share/applications/qterminal.desktop
 usr/share/applications/qterminal-drop.desktop
+usr/share/applications/qterminal.desktop
 usr/share/icons/hicolor/64x64/apps/qterminal.png
 usr/share/metainfo/qterminal.metainfo.xml
 usr/share/qterminal/qterminal_bookmarks_example.xml

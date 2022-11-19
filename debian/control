@@ -1,22 +1,21 @@
 Source: qterminal
-Maintainer: Lubuntu Developers <lubuntu-devel@lists.ubuntu.com>
-Uploaders: Simon Quigley <tsimonq2@ubuntu.com>
-XSBC-Original-Maintainer: LXQt Packaging Team <pkg-lxqt-devel@lists.alioth.debian.org>
+Maintainer: LXQt Packaging Team <pkg-lxqt-devel@lists.alioth.debian.org>
+Uploaders: Alf Gaida <agaida@siduction.org>,
+           ChangZhuo Chen (陳昌倬) <czchen@debian.org>,
+           Andrew Lee (李健秋) <ajqlee@debian.org>
 Section: x11
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
                libkf5windowsystem-dev,
-               libqtermwidget5-1-dev (>= 1.1.0),
                libqt5svg5-dev,
                libqt5x11extras5-dev,
+               libqtermwidget5-1-dev (>= 1.1.0),
                libutf8proc-dev,
                libx11-dev,
                lxqt-build-tools (>= 0.11.0)
-Standards-Version: 4.5.1
-Vcs-Browser: https://phab.lubuntu.me/source/qterminal/
-Vcs-Git: https://phab.lubuntu.me/source/qterminal.git
-XS-Debian-Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
-XS-Debian-Vcs-Git: https://salsa.debian.org/lxqt-team/qterminal.git
+Standards-Version: 4.6.1
+Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
+Vcs-Git: https://salsa.debian.org/lxqt-team/qterminal.git
 Homepage: https://github.com/lxqt/qterminal
 
 Package: qterminal
