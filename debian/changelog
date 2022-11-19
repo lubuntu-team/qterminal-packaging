@@ -1,11 +1,11 @@
-qterminal (1.2.0-0ubuntu1) UNRELEASED; urgency=medium
+qterminal (1.2.0-0ubuntu1) lunar; urgency=medium
 
   * New upstream release.
   * Fix the watch file, for real this time.
   * Lubuntuify the package slightly, to make debhelper happy.
   * Bump build dependencies in debian/control.
 
- -- Simon Quigley <tsimonq2@ubuntu.com>  Fri, 18 Nov 2022 19:08:41 -0600
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Fri, 18 Nov 2022 19:15:47 -0600
 
 qterminal (1.1.0-1) experimental; urgency=medium
 
