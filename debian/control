@@ -1,5 +1,6 @@
 Source: qterminal
-Maintainer: LXQt Packaging Team <pkg-lxqt-devel@lists.alioth.debian.org>
+Maintainer: Lubuntu Developers <lubuntu-devel@lists.ubuntu.com>
+XSBC-Original-Maintainer: LXQt Packaging Team <pkg-lxqt-devel@lists.alioth.debian.org>
 Uploaders: Alf Gaida <agaida@siduction.org>,
            ChangZhuo Chen (陳昌倬) <czchen@debian.org>,
            Andrew Lee (李健秋) <ajqlee@debian.org>
@@ -9,20 +10,20 @@ Build-Depends: debhelper-compat (= 13),
                libkf5windowsystem-dev,
                libqt5svg5-dev,
                libqt5x11extras5-dev,
-               libqtermwidget5-1-dev (>= 1.2.0~),
+               libqtermwidget5-1-dev (>= 1.2.0),
                libutf8proc-dev,
                libx11-dev,
-               lxqt-build-tools (>= 0.12.0~)
+               lxqt-build-tools (>= 0.12.0)
 Standards-Version: 4.6.1
-Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
-Vcs-Git: https://salsa.debian.org/lxqt-team/qterminal.git
+Vcs-Browser: https://git.lubuntu.me/Lubuntu/qterminal-packaging
+Vcs-Git: https://git.lubuntu.me/Lubuntu/qterminal-packaging.git
+XS-Debian-Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
+XS-Debian-Vcs-Git: https://salsa.debian.org/lxqt-team/qterminal.git
 Homepage: https://github.com/lxqt/qterminal
-Rules-Requires-Root: no
 
 Package: qterminal
 Architecture: any
-Depends: ${shlibs:Depends},
-         ${misc:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: qterminal-l10n
 Provides: x-terminal-emulator
 Description: Lightweight Qt terminal emulator
@@ -38,8 +39,7 @@ Package: qterminal-l10n
 Architecture: all
 Multi-Arch: foreign
 Section: localization
-Depends: ${misc:Depends},
-         qttranslations5-l10n
+Depends: qttranslations5-l10n, ${misc:Depends}
 Description: Language package for qterminal
  The l10n files for qterminal.
  .
