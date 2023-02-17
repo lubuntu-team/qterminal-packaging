@@ -1,6 +1,7 @@
 qterminal (1.2.0-2ubuntu1) lunar; urgency=medium
 
   * Reverted a sync from Debian.
+  * Added myself and Simon to Uploaders.
 
  -- Aaron Rainbolt <arraybolt3@ubuntu.com>  Fri, 17 Feb 2023 01:22:28 -0600
 
