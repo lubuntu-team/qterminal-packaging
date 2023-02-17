@@ -1,11 +1,22 @@
-qterminal (1.2.0-0ubuntu1) lunar; urgency=medium
+qterminal (1.2.0-2) unstable; urgency=medium
+
+  * Merge to unstable.
+  * Update d/copyright.
+  * Add Rules-Requires-Root: no.
+  * Remove the following unnecessary config in d/rules:
+    * -Wl,--as-needed
+    * --fail-missing
+
+ -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Sat, 03 Dec 2022 02:29:51 +0800
+
+qterminal (1.2.0-1) experimental; urgency=medium
 
   * New upstream release.
-  * Fix the watch file, for real this time.
-  * Lubuntuify the package slightly, to make debhelper happy.
-  * Bump build dependencies in debian/control.
+  * Fix d/watch for GitHub.
+  * Reformat d/control Depends.
+  * Reformat d/copyright to sort by copyright year.
 
- -- Simon Quigley <tsimonq2@ubuntu.com>  Fri, 18 Nov 2022 19:15:47 -0600
+ -- ChangZhuo Chen (陳昌倬) <czchen@debian.org>  Wed, 23 Nov 2022 17:25:10 +0800
 
 qterminal (1.1.0-1) experimental; urgency=medium
 
