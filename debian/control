@@ -16,7 +16,7 @@ Build-Depends: debhelper-compat (= 13),
                libutf8proc-dev,
                libx11-dev,
                lxqt-build-tools (>= 0.12.0)
-Standards-Version: 4.6.1
+Standards-Version: 4.6.2
 Vcs-Browser: https://git.lubuntu.me/Lubuntu/qterminal-packaging
 Vcs-Git: https://git.lubuntu.me/Lubuntu/qterminal-packaging.git
 XS-Debian-Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
