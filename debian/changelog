@@ -1,3 +1,9 @@
+qterminal (1.3.0-0ubuntu1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Thu, 10 Aug 2023 16:40:10 -0500
+
 qterminal (1.2.0-2ubuntu1) lunar; urgency=medium
 
   * Reverted a sync from Debian.
