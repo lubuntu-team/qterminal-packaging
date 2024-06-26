@@ -3,7 +3,7 @@ Upstream-Name: qterminal
 Source: https://github.com/lxqt/qterminal.git
 
 Files: *
-Copyright: 2016-2022 LXQt team
+Copyright: 2016-2024 LXQt team
            2010-2016 Petr Vanek <petr@scribus.info>
                 2017 Nathan Osman <nathan@quickmediasolutions.com>
                      Alexander Sokolov <sokoloff.a@gmail.com>
@@ -34,7 +34,7 @@ Copyright: 2006-2011 the LibQxt project.
 License: BSD-3-clause
 
 Files: debian/*
-Copyright: 2021-2023 Lubuntu Developers <lubuntu-devel@lists.ubuntu.com>
+Copyright: 2021-2024 Lubuntu Developers <lubuntu-devel@lists.ubuntu.com>
            2012-2018 Alf Gaida <agaida@siduction.org>
                 2016 Peter Mattern <pmattern@arcor.de>
                 2015 ChangZhuo Chen (陳昌倬) <czchen@debian.org>
