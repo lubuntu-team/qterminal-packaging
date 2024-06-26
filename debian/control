@@ -9,13 +9,13 @@ Uploaders: Alf Gaida <agaida@siduction.org>,
 Section: x11
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
-               libkf5windowsystem-dev,
-               libqt5svg5-dev,
-               libqt5x11extras5-dev,
-               libqtermwidget5-1-dev (>= 1.4.0),
+               libcanberra-dev,
+               libkf6windowsystem-dev,
+               libqtermwidget6-2-dev (>= 1.4.0),
                libutf8proc-dev,
                libx11-dev,
-               lxqt-build-tools (>= 0.13.0)
+               lxqt-build-tools (>= 2.0.0),
+               qt6-svg-dev
 Standards-Version: 4.7.0
 Vcs-Browser: https://git.lubuntu.me/Lubuntu/qterminal-packaging
 Vcs-Git: https://git.lubuntu.me/Lubuntu/qterminal-packaging.git
@@ -42,7 +42,7 @@ Package: qterminal-l10n
 Architecture: all
 Multi-Arch: foreign
 Section: localization
-Depends: qttranslations5-l10n, ${misc:Depends}
+Depends: qt6-translations-l10n, ${misc:Depends}
 Description: Language package for qterminal
  The l10n files for qterminal.
  .
