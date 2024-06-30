@@ -2,6 +2,7 @@ qterminal (2.0.1-0ubuntu1~ppa1) oracular; urgency=medium
 
   * New upstream release.
   * Bump build dependencies.
+  * Add layer-shell-qt to build dependencies.
 
  -- Aaron Rainbolt <arraybolt3@ubuntu.com>  Sat, 29 Jun 2024 21:43:25 -0500
 

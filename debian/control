@@ -9,13 +9,16 @@ Uploaders: Alf Gaida <agaida@siduction.org>,
 Section: x11
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
+               layer-shell-qt,
                libcanberra-dev,
                libkf6windowsystem-dev,
+               liblayershellqtinterface-dev,
                libqtermwidget6-2-dev (>= 2.0.1),
                libutf8proc-dev,
                libx11-dev,
                lxqt-build-tools (>= 2.0.0),
-               qt6-svg-dev
+               qt6-svg-dev,
+               qt6-wayland-dev
 Standards-Version: 4.7.0
 Vcs-Browser: https://git.lubuntu.me/Lubuntu/qterminal-packaging
 Vcs-Git: https://git.lubuntu.me/Lubuntu/qterminal-packaging.git
