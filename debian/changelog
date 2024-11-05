@@ -1,3 +1,9 @@
+qterminal (2.1.0-0ubuntu1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Tue, 05 Nov 2024 15:58:44 -0600
+
 qterminal (2.0.1-0ubuntu1) oracular; urgency=medium
 
   * New upstream release.
