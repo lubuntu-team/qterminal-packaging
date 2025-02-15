@@ -32,7 +32,7 @@ Package: qterminal
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: qterminal-l10n
-Provides: x-terminal-emulator
+Provides: xterm, x-terminal-emulator
 Description: Lightweight Qt terminal emulator
  QTerminal is a lightweight terminal emulator based on QTermWidget.
  .

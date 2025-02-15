@@ -1,3 +1,10 @@
+qterminal (2.1.0-0ubuntu3) plucky; urgency=medium
+
+  * Work around xorg recommending xterm before x-terminal-emulator by
+    providing it.
+
+ -- Simon Quigley <tsimonq2@ubuntu.com>  Sat, 15 Feb 2025 00:33:47 -0600
+
 qterminal (2.1.0-0ubuntu2) plucky; urgency=medium
 
   * No-change rebuild for lxqt-build-tools C++17 -> C++20.
