@@ -20,7 +20,7 @@ Build-Depends: debhelper-compat (= 13),
                lxqt-build-tools (>= 2.1.0),
                qt6-svg-dev (>= 6.6.0),
                qt6-wayland-dev (>= 6.6.0)
-Standards-Version: 4.7.0
+Standards-Version: 4.7.1
 Vcs-Browser: https://git.lubuntu.me/Lubuntu/qterminal-packaging
 Vcs-Git: https://git.lubuntu.me/Lubuntu/qterminal-packaging.git
 Debian-Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
@@ -32,7 +32,7 @@ Package: qterminal
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: qterminal-l10n
-Provides: xterm, x-terminal-emulator
+Provides: x-terminal-emulator, xterm
 Description: Lightweight Qt terminal emulator
  QTerminal is a lightweight terminal emulator based on QTermWidget.
  .
