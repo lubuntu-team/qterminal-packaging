@@ -13,11 +13,11 @@ Build-Depends: debhelper-compat (= 13),
                libcanberra-dev,
                libkf6windowsystem-dev (>= 6.0.0),
                liblayershellqtinterface-dev,
-               libqtermwidget6-2-dev (>= 2.1.0),
+               libqtermwidget6-2-dev (>= 2.2.0),
                libutf8proc-dev,
                libx11-dev,
                libxkbcommon-dev (>= 0.5.0),
-               lxqt-build-tools (>= 2.1.0),
+               lxqt-build-tools (>= 2.2.0),
                qt6-svg-dev (>= 6.6.0),
                qt6-wayland-dev (>= 6.6.0)
 Standards-Version: 4.7.2
