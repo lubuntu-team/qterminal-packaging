@@ -7,7 +7,6 @@ Uploaders: Alf Gaida <agaida@siduction.org>,
            Aaron Rainbolt <arraybolt3@ubuntu.com>,
            Simon Quigley <tsimonq2@ubuntu.com>
 Section: x11
-Priority: optional
 Build-Depends: debhelper-compat (= 13),
                layer-shell-qt,
                libcanberra-dev,
@@ -20,7 +19,7 @@ Build-Depends: debhelper-compat (= 13),
                lxqt-build-tools (>= 2.3.0),
                qt6-svg-dev (>= 6.6.0),
                qt6-wayland-dev (>= 6.6.0)
-Standards-Version: 4.7.3
+Standards-Version: 4.7.4
 Vcs-Browser: https://git.lubuntu.me/Lubuntu/qterminal-packaging
 Vcs-Git: https://git.lubuntu.me/Lubuntu/qterminal-packaging.git
 Debian-Vcs-Browser: https://salsa.debian.org/lxqt-team/qterminal
