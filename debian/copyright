@@ -3,7 +3,7 @@ Upstream-Name: qterminal
 Source: https://github.com/lxqt/qterminal.git
 
 Files: *
-Copyright: 2016-2025 LXQt team
+Copyright: 2016-2026 LXQt team
            2010-2016 Petr Vanek <petr@scribus.info>
                 2017 Nathan Osman <nathan@quickmediasolutions.com>
                      Alexander Sokolov <sokoloff.a@gmail.com>
