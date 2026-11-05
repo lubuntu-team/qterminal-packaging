@@ -7,7 +7,7 @@ Uploaders: Alf Gaida <agaida@siduction.org>,
            Aaron Rainbolt <arraybolt3@ubuntu.com>,
            Simon Quigley <tsimonq2@ubuntu.com>
 Section: x11
-Build-Depends: debhelper-compat (= 13),
+Build-Depends: debhelper-compat (= 14),
                layer-shell-qt,
                libcanberra-dev,
                libkf6windowsystem-dev (>= 6.0.0),
@@ -28,7 +28,6 @@ Homepage: https://github.com/lxqt/qterminal
 
 Package: qterminal
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: qterminal-l10n
 Provides: x-terminal-emulator, xterm
 Description: Lightweight Qt terminal emulator
@@ -44,7 +43,7 @@ Package: qterminal-l10n
 Architecture: all
 Multi-Arch: foreign
 Section: localization
-Depends: qt6-translations-l10n, ${misc:Depends}
+Depends: qt6-translations-l10n
 Description: Language package for qterminal
  The l10n files for qterminal.
  .
